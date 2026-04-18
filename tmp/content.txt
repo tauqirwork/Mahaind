@@ -1,0 +1,390 @@
+# PP Manufacturing Dashboard – System Architecture 
+ 
+--- 
+ 
+## 易 SYSTEM OVERVIEW  
+ 
+This system is a multi-tenant SaaS dashboard for a Polypropylene (PP) Manufacturing plant. 
+ 
+It digitizes the existing Excel-based workflow **without altering business logic**. 
+ 
+### Core Modules: 
+1. Dispatch Management   
+2. Receivables (Client Invoices & Recovery)   
+3. Client Summary Dashboard   
+4. Payables (Vendor Liabilities)   
+5. Cash Flow (Bank Transactions)   
+ 
+### Linking Logic: 
+Modules are loosely connected using: 
+- invoice_no   
+- client_name   
+- vendor_name   
+ 
+No strict relational enforcement. 
+ 
+--- 
+ 
+#  DATA SOURCE CONFIGURATION (SINGLE SOURCE) 
+ 
+## Primary Source: Google Sheets (Single File) 
+ 
+Master Sheet URL: 
+https://docs.google.com/spreadsheets/d/173Bfzte_dqB1Y9gAgsyUfnplyxGDubEfvo856gLDS
+7w/edit?usp=sharing 
+--- 
+ 
+##  SHEET (TAB) MAPPING 
+ 
+- Dispatch → "Dispatch Report"   
+- Receivables → "Final Receivables Report"   
+- Client Summary → "Sheet47"   
+- Payables → "Sheet49"   
+- Cash Flow → "In-Out"   
+ 
+--- 
+ 
+## ⚠ DATA RULES 
+ 
+----------------Page (0) Break----------------
+- Tab names must match EXACTLY   
+- First row = column headers   
+- No merged cells   
+- No empty header rows   
+- Do NOT rename columns   
+ 
+--- 
+ 
+#  DATA FETCHING & REAL-TIME 
+ 
+## Fetching 
+- Use Google Sheets API or CSV export   
+- Load full dataset per tab   
+ 
+## Refresh Strategy 
+- Auto-refresh every 60 seconds   
+- Manual refresh option   
+- No caching   
+ 
+## Expected Behavior 
+- Dashboard updates automatically   
+- Charts refresh dynamically   
+- Filters persist after refresh   
+ 
+--- 
+ 
+# 易 ROW  IDENTIFICATION LOGIC 
+ 
+Prevent duplication using: 
+ 
+- Receivables → invoice_no + client_name   
+- Dispatch → invoice_no + date + client_name   
+- Transactions → transaction_id   
+- Payables → vendor_name + type   
+ 
+### Behavior: 
+- If match → update   
+- Else → insert   
+ 
+--- 
+ 
+#  GLOBAL FILTER SYSTEM 
+ 
+All modules support: 
+- Date range   
+- Client filter   
+- Vendor filter   
+- Status filter   
+----------------Page (1) Break----------------
+ 
+Filters applied before aggregation. 
+ 
+--- 
+ 
+# ❗ DATA VALIDATION RULES 
+ 
+- Skip rows where: 
+  - invoice_no is empty   
+  - client_name is empty   
+- Convert currency → numeric   
+- Convert dates properly   
+- Remove duplicates   
+ 
+--- 
+ 
+#  MULTI-TENANT SUPPORT 
+ 
+Each record must include: 
+tenant_id 
+ 
+All queries filtered by tenant_id. 
+ 
+--- 
+ 
+# 1⃣ DISPATCH MODULE 
+ 
+## Data Structure 
+ 
+{ 
+  "id": "uuid", 
+  "date": "date", 
+  "billing_party": "string", 
+  "client_name": "string", 
+  "bag_description": "string", 
+  "fabric_description": "string", 
+  "quantity": "number", 
+  "unit": "string", 
+  "week": "string", 
+  "achievement_percent": "number", 
+  "selling_price": "number", 
+  "total_amount_gst": "number", 
+  "location": "string", 
+  "transporter": "string", 
+  "vehicle_no": "string", 
+  "invoice_no": "string", 
+  "po_number": "string", 
+  "dispatch_time": "string", 
+----------------Page (2) Break----------------
+  "cut_length": "number", 
+  "total_meters": "number", 
+  "meter_weight": "number", 
+  "total_kg": "number", 
+  "rate_per_meter": "number", 
+  "trip_id": "string", 
+  "from_location": "string", 
+  "to_location": "string", 
+  "distance": "number", 
+  "tenant_id": "uuid", 
+  "created_at": "timestamp" 
+} 
+ 
+## UI 
+- Tab: Dispatch Report   
+- Table view   
+ 
+## Filters 
+- Date   
+- Client   
+- Billing Party   
+- Transporter   
+ 
+## Charts 
+- Quantity by Date   
+- Dispatch Value Trend   
+- Client Share   
+ 
+## Logic 
+- SUM(quantity)   
+- SUM(total_amount_gst)   
+- GROUP BY date / client   
+ 
+--- 
+ 
+# 2⃣ RECEIVABLES MODULE 
+ 
+## Data Structure 
+ 
+{ 
+  "id": "uuid", 
+  "billing_party": "string", 
+  "client_name": "string", 
+  "quantity": "number", 
+  "invoice_no": "string", 
+  "invoice_date": "date", 
+  "credit_term_days": "number", 
+  "due_date": "date", 
+----------------Page (3) Break----------------
+  "invoice_amount": "number", 
+  "tds_calculated": "number", 
+  "received_amount": "number", 
+  "actual_tds_deducted": "number", 
+  "pending_amount": "number", 
+  "responsible_person": "string", 
+  "achievement_percent": "number", 
+  "days_overdue": "number", 
+  "planned_date": "date", 
+  "payment_mode": "string", 
+  "received_date": "date", 
+  "expected_payment_date": "date", 
+  "remarks": "string", 
+  "transacted_amount": "number", 
+  "tenant_id": "uuid", 
+  "created_at": "timestamp" 
+} 
+ 
+## UI 
+- Tab: Final Receivables Report   
+ 
+## Filters 
+- Date   
+- Client   
+- Responsible Person   
+- Status   
+ 
+## Charts 
+- Client Pending   
+- Paid vs Pending   
+- Monthly Collections   
+ 
+## Logic 
+- pending_amount = invoice_amount - received_amount - tds   
+- days_overdue = today - due_date   
+ 
+--- 
+ 
+# 3⃣ CLIENT SUMMARY 
+ 
+## Data Structure 
+ 
+{ 
+  "client_name": "string", 
+  "total_invoice_amount": "number", 
+  "total_received_amount": "number", 
+  "total_pending_amount": "number", 
+  "responsible_person": "string", 
+----------------Page (4) Break----------------
+  "tenant_id": "uuid" 
+} 
+ 
+## UI 
+- KPI Dashboard   
+ 
+## Charts 
+- Top Clients Pending   
+- Contribution   
+ 
+## Logic 
+- GROUP BY client   
+- SUM totals   
+ 
+--- 
+ 
+# 4⃣ PAYABLES MODULE 
+ 
+## Data Structure 
+ 
+{ 
+  "id": "uuid", 
+  "type": "string", 
+  "vendor_name": "string", 
+  "pending_amount": "number", 
+  "tenant_id": "uuid", 
+  "created_at": "timestamp" 
+} 
+ 
+## UI 
+- Tab: Final Payables Report   
+ 
+## Charts 
+- Vendor Payables   
+- Expense Split   
+ 
+## Logic 
+- GROUP BY vendor   
+ 
+--- 
+ 
+# 5⃣ CASH FLOW  MODULE 
+ 
+## Data Structure 
+ 
+{ 
+  "id": "uuid", 
+  "transaction_date": "date", 
+----------------Page (5) Break----------------
+  "party_name": "string", 
+  "transaction_id": "string", 
+  "paid_amount": "number", 
+  "received_amount": "number", 
+  "account_number": "string", 
+  "remarks": "string", 
+  "tenant_id": "uuid" 
+} 
+ 
+## UI 
+- Tab: Cash Flow   
+ 
+## Charts 
+- Daily Flow   
+- Monthly Flow   
+ 
+## Logic 
+- Inflow = SUM(received)   
+- Outflow = SUM(paid)   
+- Net = Inflow - Outflow   
+ 
+--- 
+ 
+#  DATA MAPPING (STRICT) 
+ 
+## Dispatch 
+Date → date   
+Billing Party → billing_party   
+Client → client_name   
+Bag Description → bag_description   
+Fabric Description → fabric_description   
+Actual Dispatch Qty → quantity   
+Unit → unit   
+W eek → week   
+% Achievement → achievement_percent   
+Bag Selling Price → selling_price   
+Total Amount with GST → total_amount_gst   
+Location → location   
+Transporter / Vehicle No. → transporter   
+Invoice → invoice_no   
+PO Number → po_number   
+ 
+--- 
+ 
+## Receivables 
+Client Name → client_name   
+Invoice No → invoice_no   
+Invoice Date → invoice_date   
+----------------Page (6) Break----------------
+Credit Term → credit_term_days   
+Due Date → due_date   
+Invoice Amount → invoice_amount   
+TDS Calculated → tds_calculated   
+Received Amount → received_amount   
+Actual TDS Deducted → actual_tds_deducted   
+Pending Amount → pending_amount   
+Responsible Person → responsible_person   
+Days Overdue → days_overdue   
+Payment Mode → payment_mode   
+Received Date → received_date   
+ 
+--- 
+ 
+## Client Summary 
+Client Name → client_name   
+Invoice Amount → total_invoice_amount   
+Received Amount → total_received_amount   
+Pending Amount → total_pending_amount   
+ 
+--- 
+ 
+## Payables 
+Type → type   
+Vendor / Lender → vendor_name   
+Pending Amount → pending_amount   
+ 
+--- 
+ 
+## Transactions 
+Txn Date → transaction_date   
+Party → party_name   
+Transaction Id → transaction_id   
+Paid → paid_amount   
+Received → received_amount   
+ 
+--- 
+ 
+#  FINAL SYSTEM BEHAVIOR 
+ 
+- Auto-refresh every 60 seconds   
+- Live Google Sheets sync   
+- Dynamic charts   
+- Instant filtering   
+- No manual data entry   
+ 
+----------------Page (7) Break----------------

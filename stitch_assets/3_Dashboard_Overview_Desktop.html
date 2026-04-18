@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Foundry | Dashboard Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00668B", // Deep Blue
+              "secondary": "#FF6B00", // Kinetic Orange
+              "tertiary": "#2E7D32", // Industrial Green
+              "on-primary": "#ffffff",
+              "background": "#F8FAFC",
+              "surface": "#ffffff",
+              "outline": "#94A3B8",
+              "surface-container": "#F1F5F9",
+              "surface-container-high": "#E2E8F0"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "4px",
+              "lg": "8px",
+              "xl": "12px",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+        .font-space { font-family: 'Space Grotesk', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .industrial-gradient { background: linear-gradient(135deg, #00668B 0%, #004D69 100%); }
+        .orange-accent { background-color: #FF6B00; }
+        .green-accent { background-color: #2E7D32; }
+    </style>
+</head>
+<body class="bg-background text-slate-900 antialiased">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-50 flex flex-col py-6 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
+<div class="mb-10 px-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-sky-900 dark:text-sky-100 font-space tracking-tight">Kinetic Foundry</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Plant 04 - Houston</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-2">
+<!-- Active: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 bg-sky-50 dark:bg-sky-900/30 text-sky-800 dark:text-sky-200 font-bold border-r-4 border-orange-600 scale-98 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="font-label text-sm">Reactors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="cyclone">cyclone</span>
+<span class="font-label text-sm">Extrusion</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label text-sm">Logistics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-label text-sm">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto px-4 flex flex-col gap-1">
+<button class="mb-6 w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded font-bold shadow-sm flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="report">report</span>
+            Emergency Stop
+        </button>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors rounded" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label text-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors rounded" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label text-sm">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 left-64 h-16 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/15 dark:border-slate-800/15 shadow-sm dark:shadow-none flex justify-between items-center px-8">
+<div class="flex items-center gap-8">
+<div class="flex items-center bg-slate-100 rounded px-4 py-1.5 w-80">
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400" placeholder="Search batch, inventory, or logs..." type="text"/>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-orange-600 dark:text-orange-400 font-bold border-b-2 border-orange-600 px-1 py-4" href="#">Live Feed</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-sky-700 dark:hover:text-sky-300 transition-all font-medium" href="#">Reports</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-sky-700 dark:hover:text-sky-300 transition-all font-medium" href="#">Inventory</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1">
+<button class="w-9 h-9 flex items-center justify-center text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-all">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+</button>
+</div>
+<div class="h-6 w-px bg-slate-200"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-bold font-space text-slate-900">Alex Chen</p>
+<p class="text-[10px] text-slate-500 uppercase font-bold">Plant Operator</p>
+</div>
+<div class="w-9 h-9 rounded bg-slate-200 overflow-hidden border border-slate-300">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfRX6lT_iY87GbkR346tgMFnmDy3RlekeHQ8kBdWQau6RvhYQJT7QDmr-YCaNlk7VHjmzjSKmUlhbwGDQgwaiXYcflbkj2MAwCIXIhIomxmi4qVAw-n0-4QmaQ5x-79Lno08O_JTsqx1r3QalZoATfiTDbw2sCspeIfWiLAZF5TifyH3zI7ZtFE8mXUVi8E6UaPqQuDWJLeWrvg58zzVDLBQuFmNAPedG69UQlLHSuQOxcW0rN04xhkvVpCy5Qa4P36dyzqjYZFA4"/>
+</div>
+</div>
+</div>
+</header>
+<div class="pt-24 px-10 pb-12 max-w-[1600px] mx-auto space-y-8">
+<!-- Header Section -->
+<section class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-bold font-space text-slate-900 tracking-tight">Production Dashboard</h2>
+<p class="text-slate-500 text-sm mt-1">Real-time financial and operational flow for <span class="bg-sky-100 text-sky-800 px-2 py-0.5 rounded text-xs font-bold font-space">BATCH-PP-9904</span></p>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2 border border-slate-300 text-slate-700 rounded font-bold text-xs hover:bg-slate-50 transition-colors">EXPORT DATA</button>
+<button class="px-5 py-2 bg-primary text-white rounded font-bold text-xs shadow-sm hover:opacity-90 transition-all">DOWNLOAD REPORT</button>
+</div>
+</section>
+<!-- KPI Cards Grid -->
+<section class="grid grid-cols-12 gap-6">
+<!-- Total Dispatch -->
+<div class="col-span-12 md:col-span-3 bg-white border border-slate-200 p-6 rounded shadow-sm hover:border-sky-300 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-sky-50 text-sky-700 rounded">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+</div>
+<span class="text-xs font-bold text-tertiary font-space">+12.5%</span>
+</div>
+<p class="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1">Total Dispatch</p>
+<h3 class="text-3xl font-bold font-space text-slate-900">$1,240,500</h3>
+<div class="mt-4 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<!-- Total Receivable -->
+<div class="col-span-12 md:col-span-3 bg-white border border-slate-200 p-6 rounded shadow-sm hover:border-orange-300 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-orange-50 text-orange-600 rounded">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<span class="text-xs font-bold text-orange-600 font-space">-2.4%</span>
+</div>
+<p class="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1">Total Receivable</p>
+<h3 class="text-3xl font-bold font-space text-slate-900">$842,200</h3>
+<div class="mt-4 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-1/2"></div>
+</div>
+</div>
+<!-- Total Payable -->
+<div class="col-span-12 md:col-span-3 bg-white border border-slate-200 p-6 rounded shadow-sm hover:border-green-300 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-green-50 text-green-700 rounded">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="text-xs font-bold text-slate-400 font-space uppercase">Steady</span>
+</div>
+<p class="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1">Total Payable</p>
+<h3 class="text-3xl font-bold font-space text-slate-900">$415,000</h3>
+<div class="mt-4 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-1/3"></div>
+</div>
+</div>
+<!-- Net Cash Flow -->
+<div class="col-span-12 md:col-span-3 bg-primary text-white p-6 rounded shadow-lg border-b-4 border-orange-600 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div class="p-2 bg-white/20 text-white rounded">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+<span class="text-xs font-bold text-orange-400 font-space">+8.4%</span>
+</div>
+<p class="text-white/70 text-[10px] uppercase tracking-widest font-bold mb-1 relative z-10">Net Cash Flow</p>
+<h3 class="text-3xl font-bold font-space relative z-10">$425,300</h3>
+<p class="mt-4 text-[10px] text-white/60 font-medium flex items-center gap-1 relative z-10 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[14px] text-orange-500" data-icon="verified">verified</span>
+                    Production target met
+                </p>
+</div>
+</section>
+<!-- Charts Section -->
+<section class="grid grid-cols-12 gap-8">
+<!-- Cash Flow Analysis (Main Chart) -->
+<div class="col-span-12 lg:col-span-8 bg-white border border-slate-200 rounded p-8 shadow-sm">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h4 class="text-lg font-bold font-space text-slate-900 uppercase tracking-tight">Cash Flow Analysis</h4>
+<p class="text-xs text-slate-500">Projected vs Actual Revenue Flow (Monthly)</p>
+</div>
+<div class="flex bg-slate-100 rounded p-1">
+<button class="px-4 py-1 text-[10px] font-bold rounded bg-white shadow-sm text-primary uppercase">Monthly</button>
+<button class="px-4 py-1 text-[10px] font-bold rounded text-slate-400 hover:text-slate-600 uppercase">Weekly</button>
+</div>
+</div>
+<div class="h-64 w-full relative">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 800 200">
+<defs>
+<lineargradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00668B" stop-opacity="0.1"></stop>
+<stop offset="100%" stop-color="#00668B" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Area -->
+<path d="M0,180 Q100,160 200,100 T400,120 T600,60 T800,40 V200 H0 Z" fill="url(#areaGradient)"></path>
+<!-- Line -->
+<path d="M0,180 Q100,160 200,100 T400,120 T600,60 T800,40" fill="none" stroke="#FF6B00" stroke-dasharray="0" stroke-linecap="round" stroke-width="3"></path>
+<!-- Nodes -->
+<circle cx="200" cy="100" fill="#00668B" r="5" stroke="white" stroke-width="2"></circle>
+<circle cx="400" cy="120" fill="#2E7D32" r="5" stroke="white" stroke-width="2"></circle>
+<circle cx="600" cy="60" fill="#00668B" r="5" stroke="white" stroke-width="2"></circle>
+<circle cx="800" cy="40" fill="#FF6B00" r="5" stroke="white" stroke-width="2"></circle>
+</svg>
+<div class="mt-6 w-full flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span>
+</div>
+</div>
+</div>
+<!-- Client Contribution (Donut) -->
+<div class="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded p-8 shadow-sm">
+<h4 class="text-lg font-bold font-space text-slate-900 uppercase tracking-tight mb-1">Client Mix</h4>
+<p class="text-xs text-slate-500 mb-10">Revenue share by major client account</p>
+<div class="flex flex-col items-center">
+<div class="relative w-44 h-44 mb-10">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="16" stroke="#F1F5F9" stroke-width="4"></circle>
+<!-- Blue: Global Pack -->
+<circle cx="18" cy="18" fill="none" r="16" stroke="#00668B" stroke-dasharray="45, 100" stroke-width="4"></circle>
+<!-- Orange: Indus-Poly -->
+<circle cx="18" cy="18" fill="none" r="16" stroke="#FF6B00" stroke-dasharray="25, 100" stroke-dashoffset="-45" stroke-width="4"></circle>
+<!-- Green: Prime Logistics -->
+<circle cx="18" cy="18" fill="none" r="16" stroke="#2E7D32" stroke-dasharray="30, 100" stroke-dashoffset="-70" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-xl font-bold font-space text-slate-900">$1.2M</span>
+<span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Total Gross</span>
+</div>
+</div>
+<div class="w-full space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded bg-primary"></div>
+<span class="text-xs font-semibold text-slate-700">Global Pack Ltd.</span>
+</div>
+<span class="text-xs font-bold font-space text-slate-900">45%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded bg-secondary"></div>
+<span class="text-xs font-semibold text-slate-700">Indus-Poly Co.</span>
+</div>
+<span class="text-xs font-bold font-space text-slate-900">25%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded bg-tertiary"></div>
+<span class="text-xs font-semibold text-slate-700">Prime Logistics</span>
+</div>
+<span class="text-xs font-bold font-space text-slate-900">30%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Table Section -->
+<div class="col-span-12 bg-white border border-slate-200 rounded p-8 shadow-sm">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h4 class="text-lg font-bold font-space text-slate-900 uppercase tracking-tight">Recent Dispatch Activity</h4>
+<p class="text-xs text-slate-500">Logistics movement and transaction ledger</p>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider group">
+                        Full Logistics Ledger
+                        <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" data-icon="arrow_right_alt">arrow_right_alt</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50 border-y border-slate-200">
+<tr>
+<th class="py-3 px-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Batch Ledger ID</th>
+<th class="py-3 px-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Client Partner</th>
+<th class="py-3 px-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Gross Amount</th>
+<th class="py-3 px-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-4 px-4 font-space text-sm font-bold text-slate-900">PP-9904-A</td>
+<td class="py-4 px-4 text-xs font-medium text-slate-600">Global Pack Ltd.</td>
+<td class="py-4 px-4 text-xs font-bold text-slate-900">$42,000.00</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-sky-100 text-sky-800 text-[9px] font-bold uppercase border border-sky-200">
+<span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span> Shipped
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-4 px-4 font-space text-sm font-bold text-slate-900">PP-9904-B</td>
+<td class="py-4 px-4 text-xs font-medium text-slate-600">Indus-Poly Co.</td>
+<td class="py-4 px-4 text-xs font-bold text-slate-900">$18,500.00</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-orange-100 text-orange-800 text-[9px] font-bold uppercase border border-orange-200">
+<span class="w-1.5 h-1.5 rounded-full bg-orange-600"></span> In Transit
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="py-4 px-4 font-space text-sm font-bold text-slate-900">PP-9905-C</td>
+<td class="py-4 px-4 text-xs font-medium text-slate-600">Prime Logistics</td>
+<td class="py-4 px-4 text-xs font-bold text-slate-900">$56,100.00</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-100 text-slate-600 text-[9px] font-bold uppercase border border-slate-200">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Pending
+                                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 border-b-4 border-orange-600">
+<span class="material-symbols-outlined text-2xl" data-icon="add_chart">add_chart</span>
+</button>
+</body></html>

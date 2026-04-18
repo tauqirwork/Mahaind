@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payables | Kinetic Foundry</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00668B", // Kinetic Blue
+                        "secondary": "#F37021", // Kinetic Orange
+                        "tertiary": "#4CAF50", // Kinetic Green
+                        "background": "#FDFDFD",
+                        "surface": "#FFFFFF",
+                        "surface-container": "#F4F7F9",
+                        "on-surface": "#1A1C1E",
+                        "on-surface-variant": "#40484C",
+                        "outline": "#70787D",
+                        "error": "#BA1A1A"
+                    },
+                    fontFamily: {
+                        "sans": ["Space Grotesk", "sans-serif"],
+                        "headline": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "4px",
+                        "lg": "8px",
+                        "xl": "12px",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #FDFDFD;
+            color: #1A1C1E;
+        }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, #00668B 0%, #004D69 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-white border-r border-slate-200 flex flex-col p-6 gap-2 z-50">
+<div class="mb-10">
+<h1 class="text-xl font-bold text-primary tracking-tight font-headline flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="factory">factory</span>
+                Kinetic Foundry
+            </h1>
+<p class="text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant/60 mt-2">Production Unit 04</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded border border-transparent hover:border-primary/10" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded border border-transparent hover:border-primary/10" href="#">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+<span class="font-medium">Production</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded border border-transparent hover:border-primary/10" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 bg-primary text-white rounded shadow-md font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Financials</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded border border-transparent hover:border-primary/10" href="#">
+<span class="material-symbols-outlined" data-icon="biotech">biotech</span>
+<span class="font-medium">Quality Control</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded border border-transparent hover:border-primary/10" href="#">
+<span class="material-symbols-outlined" data-icon="construction">construction</span>
+<span class="font-medium">Maintenance</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 pt-6 border-t border-slate-100">
+<button class="mb-6 flex items-center justify-center gap-2 bg-secondary text-white py-3 px-4 rounded font-bold shadow-lg active:scale-[0.98] transition-all text-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                New Batch Report
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span class="text-[11px] uppercase tracking-widest font-bold">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="help_outline">help_outline</span>
+<span class="text-[11px] uppercase tracking-widest font-bold">Support</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-20 bg-white/80 backdrop-blur-md z-40 flex justify-between items-center px-10 border-b border-slate-100">
+<div class="flex items-center flex-1">
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 text-xl" data-icon="search">search</span>
+<input class="w-full bg-slate-50 border border-slate-200 rounded py-2.5 pl-12 pr-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder:text-on-surface-variant/40" placeholder="Search invoices, vendors..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<button class="p-2.5 text-on-surface-variant hover:bg-slate-100 rounded transition-all relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="p-2.5 text-on-surface-variant hover:bg-slate-100 rounded transition-all">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+</button>
+</div>
+<div class="h-10 w-[1px] bg-slate-200"></div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface">Alex Rivera</p>
+<p class="text-[10px] uppercase tracking-tighter text-on-surface-variant font-bold">Operations Manager</p>
+</div>
+<img alt="Alex Rivera" class="w-11 h-11 rounded border-2 border-primary/20 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqwcMlsvRcb7nYpNyHsOHMKG2DYv3nI5gqqm-SgoCmzf10t9XE1QBJ4cMowZI9RlmupN8WB5PhY-6uKXtPU8f4F_crnz8nl_CJp8iCfrXtFnyDvrmQ4EiqExAvCqqpMXGIyv2enR5CfwCu5bYZ5hObzE5nMcEZRR_lmLnZyeZbQ3PvGEHNIGTUVgF1TWaJo1GFxuTcdta_hD1RyMdbDOYUcM7ArHeg8VyoxSEnSyuEbs2vAirZD9vMDojkgr7w2unkAK5PtOHZid4"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-32 px-14 pb-16 min-h-screen">
+<!-- Page Header -->
+<section class="mb-14">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-5xl font-black font-headline tracking-tighter text-on-surface">Accounts Payable</h2>
+<p class="text-on-surface-variant font-medium mt-3 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                        Managing 24 active vendor accounts for Q3 Production Cycle.
+                    </p>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-[11px] uppercase tracking-[0.2em] font-black text-on-surface-variant/40">Total Outstanding</span>
+<span class="text-4xl font-headline font-bold text-primary">$412,890.00</span>
+</div>
+</div>
+</section>
+<!-- KPI Grid -->
+<section class="grid grid-cols-12 gap-8 mb-14">
+<div class="col-span-4 bg-white p-8 rounded border border-slate-200 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
+<div>
+<div class="w-12 h-12 bg-primary/5 rounded flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="pending_actions">pending_actions</span>
+</div>
+<h3 class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Pending Approvals</h3>
+</div>
+<div class="mt-10">
+<p class="text-5xl font-headline font-bold">14</p>
+<p class="text-[11px] text-error font-bold mt-2 uppercase tracking-tight">3 Overdue by 48h+</p>
+</div>
+</div>
+<div class="col-span-8 kinetic-gradient p-10 rounded shadow-xl text-white flex justify-between items-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+<div class="relative z-10">
+<h3 class="text-white/60 text-xs font-bold uppercase tracking-[0.2em]">Next Bulk Payout</h3>
+<p class="text-6xl font-headline font-black mt-3">Oct 24, 2023</p>
+<p class="text-sm font-medium mt-6 flex items-center gap-3 bg-black/10 w-fit px-4 py-2 rounded">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+                        Scheduled for 18 main raw material suppliers.
+                    </p>
+</div>
+<div class="relative z-10 bg-white/10 backdrop-blur-lg p-8 rounded border border-white/20">
+<p class="text-[10px] uppercase tracking-[0.3em] font-black text-white/50 mb-2">Estimated Flow</p>
+<p class="text-4xl font-headline font-bold">$285,400</p>
+<div class="mt-4 h-1 w-full bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-3/4"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Vendor Breakdown List -->
+<section class="bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-slate-50/80 px-10 py-5 flex items-center text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant/50 border-b border-slate-100">
+<div class="w-2/5">Vendor Entity</div>
+<div class="w-1/5 text-right">Invoices</div>
+<div class="w-1/5 text-right">Balance Due</div>
+<div class="w-1/5 text-right">Status</div>
+</div>
+<!-- List Row 1 -->
+<div class="group border-b border-slate-100 last:border-none">
+<div class="hover:bg-primary/5 px-10 py-8 flex items-center transition-all cursor-pointer">
+<div class="w-2/5 flex items-center gap-5">
+<div class="w-14 h-14 bg-slate-100 rounded flex items-center justify-center text-primary border border-slate-200 group-hover:border-primary/20">
+<span class="material-symbols-outlined text-2xl" data-icon="precision_manufacturing">precision_manufacturing</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg text-on-surface group-hover:text-primary transition-colors">Global Polymers Inc.</h4>
+<p class="text-xs font-medium text-on-surface-variant">Primary Raw Resin Supplier</p>
+</div>
+</div>
+<div class="w-1/5 text-right font-medium text-lg">08</div>
+<div class="w-1/5 text-right font-headline font-bold text-lg text-on-surface">$142,500.00</div>
+<div class="w-1/5 flex justify-end">
+<span class="px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-black rounded uppercase tracking-widest border border-primary/20">Current</span>
+</div>
+</div>
+</div>
+<!-- List Row 2 -->
+<div class="group border-b border-slate-100 last:border-none">
+<div class="hover:bg-primary/5 px-10 py-8 flex items-center transition-all cursor-pointer">
+<div class="w-2/5 flex items-center gap-5">
+<div class="w-14 h-14 bg-slate-100 rounded flex items-center justify-center text-tertiary border border-slate-200 group-hover:border-primary/20">
+<span class="material-symbols-outlined text-2xl" data-icon="bolt">bolt</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg text-on-surface group-hover:text-primary transition-colors">Metro Grid Energy</h4>
+<p class="text-xs font-medium text-on-surface-variant">Utility Services - Unit 04</p>
+</div>
+</div>
+<div class="w-1/5 text-right font-medium text-lg">01</div>
+<div class="w-1/5 text-right font-headline font-bold text-lg text-on-surface">$88,210.50</div>
+<div class="w-1/5 flex justify-end">
+<span class="px-4 py-1.5 bg-tertiary/10 text-tertiary text-[10px] font-black rounded uppercase tracking-widest border border-tertiary/20">Processing</span>
+</div>
+</div>
+</div>
+<!-- List Row 3 (Overdue) -->
+<div class="group border-b border-slate-100 last:border-none">
+<div class="hover:bg-primary/5 px-10 py-8 flex items-center transition-all cursor-pointer">
+<div class="w-2/5 flex items-center gap-5">
+<div class="w-14 h-14 bg-error/5 rounded flex items-center justify-center text-error border border-error/10">
+<span class="material-symbols-outlined text-2xl" data-icon="local_shipping">local_shipping</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg text-on-surface group-hover:text-primary transition-colors">Swift Logistics Ltd.</h4>
+<p class="text-xs font-medium text-on-surface-variant">Fleet &amp; Distribution Partner</p>
+</div>
+</div>
+<div class="w-1/5 text-right font-medium text-lg">04</div>
+<div class="w-1/5 text-right font-headline font-bold text-lg text-error">$12,400.00</div>
+<div class="w-1/5 flex justify-end">
+<span class="px-4 py-1.5 bg-secondary text-white text-[10px] font-black rounded uppercase tracking-widest shadow-sm">Overdue</span>
+</div>
+</div>
+</div>
+<!-- List Row 4 -->
+<div class="group border-b border-slate-100 last:border-none">
+<div class="hover:bg-primary/5 px-10 py-8 flex items-center transition-all cursor-pointer">
+<div class="w-2/5 flex items-center gap-5">
+<div class="w-14 h-14 bg-slate-100 rounded flex items-center justify-center text-primary border border-slate-200 group-hover:border-primary/20">
+<span class="material-symbols-outlined text-2xl" data-icon="science">science</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg text-on-surface group-hover:text-primary transition-colors">PureChem Additives</h4>
+<p class="text-xs font-medium text-on-surface-variant">Chemical &amp; UV Stabilizer Supply</p>
+</div>
+</div>
+<div class="w-1/5 text-right font-medium text-lg">03</div>
+<div class="w-1/5 text-right font-headline font-bold text-lg text-on-surface">$34,800.00</div>
+<div class="w-1/5 flex justify-end">
+<span class="px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-black rounded uppercase tracking-widest border border-primary/20">Current</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Pagination -->
+<footer class="mt-10 flex justify-between items-center">
+<p class="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest">Showing 1-4 of 24 vendors in Unit 04 cluster.</p>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded border border-slate-200 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded bg-primary text-white font-bold shadow-md">1</button>
+<button class="w-10 h-10 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all font-bold">2</button>
+<button class="w-10 h-10 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all font-bold">3</button>
+<button class="w-10 h-10 rounded border border-slate-200 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</footer>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed bottom-12 right-12">
+<button class="bg-primary hover:bg-primary/90 text-white w-20 h-20 rounded shadow-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 group relative">
+<span class="material-symbols-outlined text-4xl" data-icon="receipt_long">receipt_long</span>
+<span class="absolute right-24 bg-on-surface text-white text-[10px] font-black uppercase tracking-[0.2em] py-3 px-5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl border border-white/10">
+                Reconcile All Invoices
+            </span>
+</button>
+</div>
+</body></html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Foundry | Receivables</title>
+<!-- Fonts: Space Grotesk for the Kinetic Foundry Design System -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "kinetic-blue": "#00668B",
+                "kinetic-orange": "#F26522",
+                "kinetic-green": "#8DC63F",
+                "outline-variant": "#D1D9DD",
+                "surface-container-highest": "#E1E2E4",
+                "surface-bright": "#F9FAFB",
+                "background": "#F9FAFB",
+                "on-primary": "#FFFFFF",
+                "primary": "#00668B",
+                "secondary": "#4A626A",
+                "surface": "#FFFFFF",
+                "error": "#BA1A1A",
+                "on-surface": "#191C1D",
+                "on-surface-variant": "#40484C",
+                "surface-container-low": "#F1F4F5",
+                "surface-container": "#ECEFF0",
+                "surface-container-high": "#E6E9EA",
+                "surface-container-lowest": "#FFFFFF"
+              },
+              fontFamily: {
+                "headline": ["Space Grotesk", "sans-serif"],
+                "body": ["Space Grotesk", "sans-serif"],
+                "label": ["Space Grotesk", "sans-serif"]
+              },
+              borderRadius: {
+                "DEFAULT": "0px", 
+                "lg": "0px", 
+                "xl": "0px", 
+                "full": "0px"
+              },
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        /* Kinetic Foundry uses sharp edges (roundness: ROUND_FOUR in design system context often refers to very subtle or zero rounding in industrial contexts, but the prompt implies a specific industrial look, I will use sharp edges for that 'Foundry' feel as per the documentation's 'Industrial Alchemist' theme) */
+        body {
+            background-color: #F9FAFB;
+            color: #191C1D;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .btn-kinetic {
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+        .btn-kinetic:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+        .kinetic-card {
+            border: 1px solid #E1E2E4;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="font-body font-normal overflow-x-hidden">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant bg-white flex flex-col p-6 gap-2 z-50">
+<div class="mb-10 flex flex-col">
+<span class="text-xl font-headline font-bold text-kinetic-blue tracking-tighter uppercase">Kinetic Foundry</span>
+<span class="text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant mt-1">Industrial Intelligence</span>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-kinetic-blue transition-colors hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span class="font-label text-sm font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-kinetic-blue transition-colors hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="factory">factory</span>
+<span class="font-label text-sm font-medium">Production</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-kinetic-blue transition-colors hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+<span class="font-label text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-kinetic-blue text-white font-bold" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="analytics">analytics</span>
+<span class="font-label text-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-kinetic-blue transition-colors hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="biotech">biotech</span>
+<span class="font-label text-sm font-medium">Quality Control</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-kinetic-blue transition-colors hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="build">build</span>
+<span class="font-label text-sm font-medium">Maintenance</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1">
+<button class="w-full mb-6 bg-kinetic-orange text-white py-3 font-label text-xs font-bold uppercase tracking-widest btn-kinetic">
+            New Batch Report
+        </button>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-kinetic-blue transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span class="font-label text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-kinetic-blue transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+<span class="font-label text-sm font-medium">Support</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-white border-b border-outline-variant flex justify-between items-center px-8">
+<div class="flex items-center gap-4 bg-surface-container-low px-4 py-2 w-96 border border-outline-variant focus-within:border-kinetic-blue transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full font-body placeholder:text-on-surface-variant/50" placeholder="Search invoices or clients..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-kinetic-blue transition-all relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-kinetic-orange"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-bold uppercase tracking-tight">Marcus Chen</p>
+<p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-widest">Ops Manager</p>
+</div>
+<img alt="Operations Manager" class="h-10 w-10 border border-outline-variant grayscale hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_g3w-jo4Lopf2ZSZPIgmNS_H1MiPY6yJx2NB7EE03asXupGRMDtsau7muH2IAaRk5LkRknlNQlTWGR-Rm62Td7HTXt0BO82af-aV8gsJdqY5jyGLF896e2WhLSB8-CM7XW2HNjG2mCz0HDhq1kDplNAYEjfPVHGNukvdef2Zy8HQ2_olKuWqCfAQLcRH01Eej3ZxWv77zsUkW-NEA9ItQQ7LKMUChU7M0zJur-75QEBm0wZrPpqQBJk1_c2ZtL5Ii_9TaNjmjQz4"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-12 min-h-screen">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-12 border-b border-outline-variant pb-8">
+<div>
+<h1 class="font-headline text-5xl font-extrabold tracking-tighter text-on-surface uppercase italic">Accounts Receivable</h1>
+<p class="text-on-surface-variant font-body text-lg mt-2 font-light">Real-time outstanding balance across PP manufacturing channels.</p>
+</div>
+<div class="flex gap-4">
+<button class="border-2 border-kinetic-blue text-kinetic-blue px-8 py-3 font-label text-xs font-bold uppercase tracking-widest btn-kinetic">Export Ledger</button>
+<button class="bg-kinetic-blue text-white px-8 py-3 font-label text-xs font-bold uppercase tracking-widest btn-kinetic">Run Collection Report</button>
+</div>
+</div>
+<!-- KPI Bento Grid -->
+<div class="grid grid-cols-12 gap-6 mb-12">
+<div class="col-span-12 md:col-span-4 bg-white p-8 kinetic-card border-l-4 border-l-kinetic-blue flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">Total Outstanding</span>
+<h2 class="text-5xl font-headline font-extrabold mt-3 text-kinetic-blue tracking-tighter">$2,845,000</h2>
+</div>
+<div class="mt-8 flex items-center gap-2 text-kinetic-green font-bold">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-xs uppercase tracking-widest">+12.5% vs Last Period</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 bg-white p-8 kinetic-card border-l-4 border-l-kinetic-orange flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">Overdue (30-60 Days)</span>
+<h2 class="text-5xl font-headline font-extrabold mt-3 text-kinetic-orange tracking-tighter">$142,500</h2>
+</div>
+<div class="mt-8">
+<div class="w-full bg-surface-container h-1 overflow-hidden">
+<div class="bg-kinetic-orange w-1/4 h-full"></div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant mt-3 uppercase tracking-widest">Risk Level: Moderate</p>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface-container-low p-8 kinetic-card border-l-4 border-l-on-surface flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">Avg. Collection Period</span>
+<h2 class="text-5xl font-headline font-extrabold mt-3 text-on-surface tracking-tighter">22 Days</h2>
+</div>
+<div class="mt-8">
+<span class="material-symbols-outlined text-on-surface-variant text-4xl" data-icon="schedule">schedule</span>
+</div>
+</div>
+</div>
+<!-- Client-Wise Receivables -->
+<div class="grid grid-cols-12 gap-8 mb-12">
+<div class="col-span-12 lg:col-span-8 bg-white kinetic-card">
+<div class="px-8 py-6 bg-surface-container-low flex justify-between items-center border-b border-outline-variant">
+<h3 class="font-headline font-bold text-xl uppercase tracking-tight">Top Client Exposure</h3>
+<button class="text-kinetic-blue text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-1 hover:underline">View All Clients <span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span></button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container border-b border-outline-variant">
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Client Name</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Open Invoices</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant text-right">Balance Amount</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Credit Health</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6">
+<p class="font-headline font-bold text-on-surface text-lg uppercase tracking-tight">PolyPlast Global Ltd.</p>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-widest mt-1">ID: #44092</p>
+</td>
+<td class="px-8 py-6 font-body text-sm font-medium">12 Active</td>
+<td class="px-8 py-6 font-headline font-extrabold text-right text-kinetic-blue text-xl tracking-tighter">$842,500.00</td>
+<td class="px-8 py-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-kinetic-green/10 border border-kinetic-green/30">
+<div class="h-1.5 w-1.5 bg-kinetic-green"></div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-kinetic-green">Excellent</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6">
+<p class="font-headline font-bold text-on-surface text-lg uppercase tracking-tight">Vanguard Packaging</p>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-widest mt-1">ID: #44118</p>
+</td>
+<td class="px-8 py-6 font-body text-sm font-medium">08 Active</td>
+<td class="px-8 py-6 font-headline font-extrabold text-right text-kinetic-blue text-xl tracking-tighter">$620,000.00</td>
+<td class="px-8 py-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-kinetic-green/10 border border-kinetic-green/30">
+<div class="h-1.5 w-1.5 bg-kinetic-green"></div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-kinetic-green">Excellent</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6">
+<p class="font-headline font-bold text-on-surface text-lg uppercase tracking-tight">Nexus Automotive Parts</p>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-widest mt-1">ID: #44002</p>
+</td>
+<td class="px-8 py-6 font-body text-sm font-medium">04 Active</td>
+<td class="px-8 py-6 font-headline font-extrabold text-right text-kinetic-orange text-xl tracking-tighter">$142,500.00</td>
+<td class="px-8 py-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-kinetic-orange/10 border border-kinetic-orange/30">
+<div class="h-1.5 w-1.5 bg-kinetic-orange"></div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-kinetic-orange">Warning</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Aging Analysis Sidebar -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-low kinetic-card p-8 flex flex-col border border-outline-variant">
+<h3 class="font-headline font-bold text-xl uppercase tracking-tight mb-8">Aging Summary</h3>
+<div class="space-y-8 flex-grow">
+<div class="flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">Current</span>
+<span class="font-headline text-2xl font-extrabold text-kinetic-blue tracking-tighter">$2.4M</span>
+</div>
+<div class="w-1/2 bg-surface-container h-1">
+<div class="bg-kinetic-blue w-5/6 h-full"></div>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">1-30 Days</span>
+<span class="font-headline text-2xl font-extrabold text-on-surface tracking-tighter">$302K</span>
+</div>
+<div class="w-1/2 bg-surface-container h-1">
+<div class="bg-kinetic-blue/50 w-1/4 h-full"></div>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">31-60 Days</span>
+<span class="font-headline text-2xl font-extrabold text-kinetic-orange tracking-tighter">$142K</span>
+</div>
+<div class="w-1/2 bg-surface-container h-1">
+<div class="bg-kinetic-orange w-1/6 h-full"></div>
+</div>
+</div>
+</div>
+<div class="mt-10 p-5 bg-white border border-outline-variant">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-kinetic-orange" data-icon="lightbulb">lightbulb</span>
+<p class="text-xs text-on-surface-variant leading-relaxed font-medium">Early payment discounts for <span class="font-bold text-on-surface">Vanguard Packaging</span> could accelerate $620k cash inflow by 12 days.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Invoice-Level Table -->
+<div class="bg-white kinetic-card overflow-hidden">
+<div class="px-8 py-6 flex justify-between items-center border-b border-outline-variant bg-surface-container-low">
+<div class="flex items-center gap-6">
+<h3 class="font-headline font-bold text-xl uppercase tracking-tight">Detailed Invoices</h3>
+<div class="flex border border-outline-variant bg-white">
+<button class="px-5 py-2 bg-kinetic-blue text-white text-[10px] font-bold uppercase tracking-widest">All Invoices</button>
+<button class="px-5 py-2 text-on-surface-variant text-[10px] font-bold uppercase tracking-widest hover:bg-surface-container">Overdue</button>
+<button class="px-5 py-2 text-on-surface-variant text-[10px] font-bold uppercase tracking-widest hover:bg-surface-container">Settled</button>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-5 py-2 border border-outline-variant text-[10px] font-bold uppercase tracking-widest hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                    Filter
+                </button>
+<button class="flex items-center gap-2 px-5 py-2 border border-outline-variant text-[10px] font-bold uppercase tracking-widest hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="sort">sort</span>
+                    Due Date
+                </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container border-b border-outline-variant">
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Inv #</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Issue Date</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Client</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Amount</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Due Date</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Status</th>
+<th class="px-8 py-4 font-label text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6 text-sm font-bold font-headline uppercase">INV-2024-001</td>
+<td class="px-8 py-6 text-xs text-on-surface-variant font-medium">12 OCT 2023</td>
+<td class="px-8 py-6 text-sm font-bold uppercase tracking-tight">Nexus Automotive</td>
+<td class="px-8 py-6 text-lg font-extrabold text-kinetic-blue tracking-tighter">$42,500.00</td>
+<td class="px-8 py-6 text-[10px] text-kinetic-orange font-bold uppercase tracking-widest">12 JAN 2024 (Overdue)</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-kinetic-orange/10 border border-kinetic-orange/30 text-kinetic-orange text-[9px] font-bold uppercase tracking-widest">Overdue</span>
+</td>
+<td class="px-8 py-6">
+<button class="text-kinetic-blue hover:underline text-[10px] font-bold uppercase tracking-widest">Send Reminder</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6 text-sm font-bold font-headline uppercase">INV-2024-042</td>
+<td class="px-8 py-6 text-xs text-on-surface-variant font-medium">01 DEC 2023</td>
+<td class="px-8 py-6 text-sm font-bold uppercase tracking-tight">PolyPlast Global</td>
+<td class="px-8 py-6 text-lg font-extrabold text-kinetic-blue tracking-tighter">$120,000.00</td>
+<td class="px-8 py-6 text-xs text-on-surface-variant font-medium uppercase">01 FEB 2024</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-on-surface/5 border border-on-surface/10 text-on-surface-variant text-[9px] font-bold uppercase tracking-widest">Pending</span>
+</td>
+<td class="px-8 py-6">
+<button class="text-on-surface-variant hover:text-on-surface text-[10px] font-bold uppercase tracking-widest">Download PDF</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6 text-sm font-bold font-headline uppercase">INV-2023-899</td>
+<td class="px-8 py-6 text-xs text-on-surface-variant font-medium">15 SEP 2023</td>
+<td class="px-8 py-6 text-sm font-bold uppercase tracking-tight">Vanguard Packaging</td>
+<td class="px-8 py-6 text-lg font-extrabold text-kinetic-blue tracking-tighter">$84,200.00</td>
+<td class="px-8 py-6 text-xs text-on-surface-variant font-medium uppercase">15 OCT 2023</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-kinetic-green/10 border border-kinetic-green/30 text-kinetic-green text-[9px] font-bold uppercase tracking-widest">Paid</span>
+</td>
+<td class="px-8 py-6 text-kinetic-green/70 italic text-[10px] font-bold uppercase">Settled 14 Oct</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-all">
+<td class="px-8 py-6 text-sm font-bold font-headline uppercase">INV-2024-055</td>
+<td class="px-8 py-6 text-xs text-on-surface-variant font-medium">15 DEC 2023</td>
+<td class="px-8 py-6 text-sm font-bold uppercase tracking-tight">Nexus Automotive</td>
+<td class="px-8 py-6 text-lg font-extrabold text-kinetic-blue tracking-tighter">$100,000.00</td>
+<td class="px-8 py-6 text-[10px] text-kinetic-orange font-bold uppercase tracking-widest">15 JAN 2024 (Overdue)</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-kinetic-orange/10 border border-kinetic-orange/30 text-kinetic-orange text-[9px] font-bold uppercase tracking-widest">Overdue</span>
+</td>
+<td class="px-8 py-6">
+<button class="text-kinetic-blue hover:underline text-[10px] font-bold uppercase tracking-widest">Send Reminder</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-8 py-6 flex justify-between items-center bg-surface-container-low/50 border-t border-outline-variant">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Showing 4 of 124 active invoices</p>
+<div class="flex">
+<button class="w-10 h-10 border border-outline-variant bg-white text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 border border-outline-variant bg-kinetic-blue text-white text-[10px] font-extrabold">1</button>
+<button class="w-10 h-10 border border-outline-variant bg-white text-on-surface-variant hover:bg-surface-container text-[10px] font-extrabold">2</button>
+<button class="w-10 h-10 border border-outline-variant bg-white text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB -->
+<button class="fixed bottom-8 right-8 h-16 w-16 bg-kinetic-orange text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 shadow-lg kinetic-card">
+<span class="material-symbols-outlined text-3xl font-bold" data-icon="add">add</span>
+</button>
+</body></html>
