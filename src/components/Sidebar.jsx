@@ -13,6 +13,7 @@ const Sidebar = () => {
     const operationLinks = [
       { to: '/products', icon: 'shopping_bag', label: 'Products' },
       { to: '/production', icon: 'precision_manufacturing', label: 'Production' },
+      { to: '/conversion-sheet', icon: 'description', label: 'Conversion Sheets' },
       { to: '/calculator', icon: 'calculate', label: 'Calculator Entry' },
       { to: '/quotations', icon: 'request_quote', label: 'Quotations Tracker' },
       { to: '/team', icon: 'groups', label: 'Team KPIs' },
