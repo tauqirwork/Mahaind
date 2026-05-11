@@ -10,8 +10,8 @@ import CashFlow from './pages/CashFlow';
 import Inventory from './pages/Inventory';
 import Products from './pages/Products';
 import Production from './pages/Production';
-import ConversionSheet from './pages/ConversionSheet';
 import Calculator from './pages/Calculator';
+import ConversionSheets from './pages/ConversionSheets';
 import Settings from './pages/Settings';
 import Reports from './pages/Reports';
 import Quotations from './pages/Quotations';
@@ -50,7 +50,7 @@ function App() {
                             <Route path="/inventory" element={<Inventory />} />
                             <Route path="/products" element={<Products />} />
                             <Route path="/production" element={<Production />} />
-                            <Route path="/conversion-sheet" element={<ConversionSheet />} />
+                            <Route path="/conversion" element={<ConversionSheets />} />
                             <Route path="/calculator" element={<Calculator />} />
                             <Route path="/quotations" element={<Quotations />} />
                             <Route path="/invoice-gen" element={<InvoiceGenerator />} />

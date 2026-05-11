@@ -1,0 +1,109 @@
+import React, { useState } from 'react';
+import { useSheetData } from '../hooks/useSheetData';
+import SheetDataTable from '../components/conversion/SheetDataTable';
+import EntryFormDrawer from '../components/conversion/EntryFormDrawer';
+
+const TABS = [
+  { key: 'tapeline', label: 'Tapeline' },
+  { key: 'rolldown', label: 'Roll Down' },
+  { key: 'liner',    label: 'Liner' },
+  { key: 'printing', label: 'Printing' },
+  { key: 'bopp',     label: 'BOPP / Lam' },
+  { key: 'bcs',      label: 'BCS' },
+  { key: 'baling',   label: 'Baling' },
+];
+
+export default function ConversionSheets() {
+  const [activeTab, setActiveTab] = useState('tapeline');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const { data, loading, error, reload, setData } = useSheetData(activeTab);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const handleEntrySuccess = (newRow, rowNum) => {
+    setIsDrawerOpen(false);
+    showToast(`Success! Entry added at row ${rowNum}`);
+    // Append to bottom of local state to match sheet order
+    setData(prev => ({
+      ...prev,
+      rows: [...prev.rows, newRow]
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h2 className="text-3xl font-bold font-space text-slate-900 tracking-tight">Conversion Sheets</h2>
+          <p className="text-slate-500 text-sm mt-1">Direct Google Sheets integration for production tracking.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={reload}
+            className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center"
+            title="Refresh Table"
+          >
+            <span className={`material-symbols-outlined ${loading ? 'animate-spin' : ''}`}>sync</span>
+          </button>
+          <button 
+            onClick={() => setIsDrawerOpen(true)}
+            className="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded text-[11px] font-bold tracking-wider transition-colors flex items-center gap-2 shadow-sm"
+          >
+            <span className="material-symbols-outlined text-[16px]">add</span>
+            ADD ENTRY
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-600 p-4 rounded border border-red-200 flex items-center gap-2">
+          <span className="material-symbols-outlined">error</span>
+          {error}
+        </div>
+      )}
+
+      {/* Tabs */}
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex space-x-8 overflow-x-auto">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`
+                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                ${activeTab === tab.key
+                  ? 'border-sky-500 text-sky-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                }
+              `}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Table */}
+      <SheetDataTable headers={data.headers} rows={data.rows} loading={loading} />
+
+      <EntryFormDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        activeTab={activeTab}
+        onSubmitSuccess={handleEntrySuccess}
+      />
+
+      {toastMessage && (
+        <div className="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-3 rounded shadow-xl flex items-center gap-2 animate-fade-in z-50">
+          <span className="material-symbols-outlined text-green-400">check_circle</span>
+          <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
+    </div>
+  );
+}

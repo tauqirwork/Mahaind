@@ -1,11 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { getSettings, saveSettings, addConversionSheet, extractSheetId } from '../services/settingsService';
+import { getToken } from '../services/sheetsApi';
 import { supabase } from '../utils/supabaseClient';
-
 const Settings = () => {
   const [settings, setSettings] = useState(getSettings());
-  const [newMonth, setNewMonth] = useState('');
-  const [newUrl, setNewUrl] = useState('');
+  const [sheetConfig, setSheetConfig] = useState({
+    sheets: {
+      tapeline: '',
+      rolldown: '',
+      liner: '',
+      printing: '',
+      bopp: '',
+      bcs: '',
+      baling: ''
+    }
+  });
+  const [savingSheetConfig, setSavingSheetConfig] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+  useEffect(() => {
+    const fetchSheetConfig = async () => {
+      try {
+        const token = await getToken();
+        const res = await fetch(`${API_BASE}/config`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.sheets) setSheetConfig(data);
+        }
+      } catch (err) {
+        console.error("Failed to load sheet config", err);
+      }
+    };
+    fetchSheetConfig();
+  }, []);
+
+  const handleSaveSheetConfig = async () => {
+    setSavingSheetConfig(true);
+    try {
+      const token = await getToken();
+      const res = await fetch(`${API_BASE}/config`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify(sheetConfig)
+      });
+      if (!res.ok) throw new Error("Failed to save config");
+      setSaveMessage('Google Sheets Configuration saved successfully.');
+      setTimeout(() => setSaveMessage(''), 3000);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSavingSheetConfig(false);
+    }
+  };
+
   const [saveMessage, setSaveMessage] = useState('');
 
   // Admin Provisioning State
@@ -69,20 +121,7 @@ const Settings = () => {
     }
   };
 
-  const handleAddSheet = () => {
-    if (!newMonth || !newUrl) return;
-    const sheetId = extractSheetId(newUrl);
-    if (!sheetId) {
-      setSaveMessage('Invalid URL or Sheet ID. Please paste a valid Google Sheets link.');
-      return;
-    }
-    const updated = addConversionSheet(newMonth, sheetId);
-    setSettings(updated);
-    setNewMonth('');
-    setNewUrl('');
-    setSaveMessage(`Added "${newMonth}" conversion sheet successfully!`);
-    setTimeout(() => setSaveMessage(''), 3000);
-  };
+
 
   const handleActivateSheet = (index) => {
     const updated = { ...settings };
@@ -231,75 +270,37 @@ const Settings = () => {
         </div>
       </section>
 
-      {/* Monthly Conversion Sheets */}
-      <section className="bg-white border border-slate-200 rounded p-8 shadow-sm animate-fade-in">
-        <h4 className="text-lg font-bold font-space text-slate-900 uppercase tracking-tight mb-1">Monthly Conversion Sheets</h4>
-        <p className="text-xs text-slate-500 mb-6">Add a new month's conversion sheet URL. The active sheet is used for Production metrics.</p>
-
-        {/* Add New Sheet */}
-        <div className="bg-slate-50 rounded p-5 border border-slate-200 mb-6">
-          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Add New Month</p>
-          <div className="flex gap-3 items-end">
-            <div className="flex-shrink-0">
-              <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1">Month Label</label>
-              <input
-                type="text"
-                className="border border-slate-300 rounded px-3 py-2 text-sm w-36 focus:outline-none focus:border-primary"
-                placeholder="e.g. Apr 2026"
-                value={newMonth}
-                onChange={e => setNewMonth(e.target.value)}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1">Google Sheet URL or ID</label>
-              <input
-                type="text"
-                className="border border-slate-300 rounded px-3 py-2 text-sm w-full focus:outline-none focus:border-primary"
-                placeholder="Paste the full Google Sheets URL..."
-                value={newUrl}
-                onChange={e => setNewUrl(e.target.value)}
-              />
-            </div>
-            <button
-              onClick={handleAddSheet}
-              className="px-5 py-2 bg-primary text-white rounded font-bold text-xs shadow-sm hover:opacity-90 transition-all tracking-wider shrink-0"
-            >
-              ADD SHEET
-            </button>
+      {/* Google Sheets Configuration */}
+      <section className="bg-white border border-slate-200 rounded p-8 shadow-sm animate-fade-in mt-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h4 className="text-lg font-bold font-space text-slate-900 uppercase tracking-tight mb-1">Google Sheets Configuration</h4>
+            <p className="text-xs text-slate-500">Configure Spreadsheet IDs for the 7 active production tabs.</p>
           </div>
+          <button 
+            onClick={handleSaveSheetConfig}
+            disabled={savingSheetConfig}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded text-[11px] font-bold tracking-wider transition-colors disabled:opacity-50"
+          >
+            {savingSheetConfig ? 'SAVING...' : 'SAVE CONFIG'}
+          </button>
         </div>
 
-        {/* Sheet List */}
-        <div className="space-y-2">
-          {settings.conversionSheetUrls.map((sheet, i) => (
-            <div
-              key={i}
-              className={`flex items-center justify-between border rounded p-4 transition-colors ${
-                sheet.active
-                  ? 'bg-green-50 border-green-200'
-                  : 'bg-white border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                {sheet.active && (
-                  <span className="material-symbols-outlined text-green-600 text-sm">check_circle</span>
-                )}
-                <div>
-                  <p className="text-sm font-bold text-slate-900">{sheet.month}</p>
-                  <p className="text-xs font-mono text-slate-500">{sheet.sheetId}</p>
-                </div>
-              </div>
-              {!sheet.active && (
-                <button
-                  onClick={() => handleActivateSheet(i)}
-                  className="px-3 py-1.5 border border-slate-300 text-slate-700 rounded text-xs font-bold hover:bg-slate-50 transition-colors"
-                >
-                  SET ACTIVE
-                </button>
-              )}
-              {sheet.active && (
-                <span className="text-xs font-bold text-green-600 uppercase">Active</span>
-              )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Object.keys(sheetConfig.sheets).map(key => (
+            <div key={key} className="bg-slate-50 rounded p-4 border border-slate-200">
+              <label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1 block">
+                {key.replace(/([A-Z])/g, ' $1').trim()} Sheet ID
+              </label>
+              <input 
+                type="text" 
+                className="w-full border border-slate-300 rounded px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:border-indigo-500" 
+                value={sheetConfig.sheets[key]} 
+                onChange={e => setSheetConfig({
+                  ...sheetConfig, 
+                  sheets: { ...sheetConfig.sheets, [key]: e.target.value }
+                })} 
+              />
             </div>
           ))}
         </div>

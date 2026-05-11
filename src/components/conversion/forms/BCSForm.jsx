@@ -1,132 +1,83 @@
-import React, { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { calculateBCSFields } from '../../../utils/conversionCalculations';
-import ManualInputSection from '../sections/ManualInputSection';
-import AutoCalculatedSection, { AutoField } from '../sections/AutoCalculatedSection';
+import React, { useState } from 'react';
+import { FORM_FIELDS } from '../../../config/formFields';
+import { useAppendEntry } from '../../../hooks/useAppendEntry';
 
-const BCSForm = ({ onSubmit, isSubmitting }) => {
-  const { register, handleSubmit, watch } = useForm({
-    defaultValues: {
-      entry_date: new Date().toISOString().split('T')[0],
-      client_code: '',
-      shift: 'A',
-      operator_name: '',
-      contractor_name: '',
-      bcs_machine_no: '',
-      roll_no_id: '',
-      bags_produced_nos: 0,
-      bcs_wastage_nos: 0,
-      loom_damaged_nos: 0,
-      print_bopp_damaged_nos: 0,
-      blade_cut_damaged_nos: 0,
-      repairable_bags_nos: 0,
-      tester_name: '',
-      remarks: ''
-    }
+export default function BCSForm({ onSubmitSuccess }) {
+  const fields = FORM_FIELDS.bcs;
+  const { submit, loading, error } = useAppendEntry('bcs', onSubmitSuccess);
+
+  const [formData, setFormData] = useState(() => {
+    const defaults = {};
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localTime = new Date(now.getTime() - offset);
+    defaults.date = localTime.toISOString().split('T')[0];
+    defaults.time = localTime.toISOString().split('T')[1].slice(0, 5);
+    return defaults;
   });
 
-  const values = watch();
-  
-  // Mock Bag Master for preview
-  const mockBagMaster = { total_bag_weight_g: 50, cut_length_inch: 39.37 };
+  const handleChange = (name, value) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-  const calculated = useMemo(() => {
-    return calculateBCSFields(values, mockBagMaster);
-  }, [
-    values.bags_produced_nos, values.bcs_wastage_nos, values.loom_damaged_nos,
-    values.print_bopp_damaged_nos, values.blade_cut_damaged_nos
-  ]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const missing = fields.filter(f => f.required && !formData[f.name]);
+    if (missing.length > 0) {
+      alert(`Please fill: ${missing.map(f => f.label).join(', ')}`);
+      return;
+    }
+    submit(formData);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <ManualInputSection title="General Details">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Date *</label>
-          <input type="date" {...register('entry_date', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <div className="text-red-500 text-sm bg-red-50 p-3 rounded">{error}</div>}
+      
+      {fields.map(field => (
+        <div key={field.name}>
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+            {field.label} {field.required && <span className="text-red-500">*</span>}
+          </label>
+          
+          {field.type === 'select' ? (
+            <select
+              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-sky-500"
+              value={formData[field.name] || ''}
+              onChange={e => handleChange(field.name, e.target.value)}
+            >
+              <option value="">Select...</option>
+              {field.options.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+          ) : field.type === 'textarea' ? (
+            <textarea
+              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-sky-500"
+              value={formData[field.name] || ''}
+              onChange={e => handleChange(field.name, e.target.value)}
+              rows={2}
+            />
+          ) : (
+            <input
+              type={field.type}
+              step={field.type === 'number' ? 'any' : undefined}
+              className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-sky-500"
+              value={formData[field.name] || ''}
+              onChange={e => handleChange(field.name, e.target.value)}
+            />
+          )}
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Shift *</label>
-          <select {...register('shift')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            <option value="A">Shift A</option>
-            <option value="B">Shift B</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Client Code *</label>
-          <input type="text" {...register('client_code', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Operator *</label>
-          <input type="text" {...register('operator_name', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Contractor *</label>
-          <input type="text" {...register('contractor_name', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">BCS Machine No. *</label>
-          <input type="number" {...register('bcs_machine_no', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Roll No. (Link) *</label>
-          <input type="text" placeholder="Search Roll No..." {...register('roll_no_id', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-      </ManualInputSection>
-
-      <ManualInputSection title="Production & Wastage">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Bags Produced (Nos.) *</label>
-          <input type="number" {...register('bags_produced_nos', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">BCS Wastage (Nos)</label>
-          <input type="number" {...register('bcs_wastage_nos')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Loom Damaged (Nos)</label>
-          <input type="number" {...register('loom_damaged_nos')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Print/BOPP Damaged (Nos)</label>
-          <input type="number" {...register('print_bopp_damaged_nos')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Blade Cut Damaged (Nos)</label>
-          <input type="number" {...register('blade_cut_damaged_nos')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Repairable Bags (Nos)</label>
-          <input type="number" {...register('repairable_bags_nos')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Tester Name *</label>
-          <input type="text" {...register('tester_name', { required: true })} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">Remarks</label>
-          <textarea {...register('remarks')} rows="2" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-        </div>
-      </ManualInputSection>
-
-      <AutoCalculatedSection>
-        <AutoField label="Final Wastage" value={calculated.final_wastage_nos} unit="nos" isHighlight highlightColor="red" />
-        <AutoField label="Finalised Bags" value={calculated.finalised_bags_nos} unit="nos" isHighlight />
-        <AutoField label="Total Weight" value={calculated.total_weight_kg} unit="kg" />
-        <AutoField label="Total Mtrs" value={calculated.total_mtrs} unit="m" />
-        <AutoField label="Contractor Bill" value="Auto-calc from rate" unit="₹" />
-      </AutoCalculatedSection>
-
-      <div className="flex justify-end pt-4 border-t border-gray-200">
+      ))}
+      
+      <div className="pt-4">
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          disabled={loading}
+          className="w-full bg-sky-600 text-white py-3 rounded font-bold text-sm uppercase tracking-wider hover:bg-sky-500 disabled:opacity-50 transition-colors flex justify-center items-center gap-2"
         >
-          {isSubmitting ? 'Saving...' : 'Save Entry'}
+          {loading && <span className="material-symbols-outlined animate-spin text-sm">sync</span>}
+          {loading ? 'Submitting...' : 'Submit Entry'}
         </button>
       </div>
     </form>
   );
-};
-
-export default BCSForm;
+}

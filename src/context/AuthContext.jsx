@@ -79,12 +79,14 @@ export const AuthProvider = ({ children }) => {
            setUser(mockUser);
            setRole('super_admin');
            setError(null); // Clear any supbase config errors
+           localStorage.setItem('mock-auth-token', 'mock-admin-token');
            return { data: mockUser, error: null };
         } else if (email === 'staff@mahaind.com' && password === 'staff123') {
            const mockUser = { id: 'mock-2', email: 'staff@mahaind.com' };
            setUser(mockUser);
            setRole('viewer');
            setError(null); // Clear any supbase config errors
+           localStorage.setItem('mock-auth-token', 'mock-staff-token');
            return { data: mockUser, error: null };
         }
         setError(error.message);
@@ -95,11 +97,13 @@ export const AuthProvider = ({ children }) => {
          const mockUser = { id: 'mock-1', email: 'admin@mahaind.com' };
          setUser(mockUser);
          setRole('super_admin');
+         localStorage.setItem('mock-auth-token', 'mock-admin-token');
          return { data: mockUser, error: null };
       } else if (email === 'staff@mahaind.com' && password === 'staff123') {
          const mockUser = { id: 'mock-2', email: 'staff@mahaind.com' };
          setUser(mockUser);
          setRole('viewer');
+         localStorage.setItem('mock-auth-token', 'mock-staff-token');
          return { data: mockUser, error: null };
       }
       setError("Connection failed. Please check your Supabase credentials.");
@@ -110,6 +114,7 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signOut();
     setUser(null);
     setRole(null);
+    localStorage.removeItem('mock-auth-token');
   };
 
   return (
