@@ -25,7 +25,7 @@ module.exports = {
   },
   bopp: {
     spreadsheetId: process.env.SHEET_ID_BOPP || '',
-    tab: 'A. BOPPLamination',
+    tab: 'A. BOPP/Lamination',
     headerRow: 2,
     dataStartRow: 3,
   },
@@ -40,5 +40,47 @@ module.exports = {
     tab: 'B. Baling',
     headerRow: 2,
     dataStartRow: 3,
+  },
+  loom_qc: {
+    spreadsheetId: process.env.SHEET_ID_ROLLDOWN || '',
+    tab: 'B. Loom QC Report',
+    headerRow: 2,
+    dataStartRow: 3,
+  },
+  liner_qc: {
+    spreadsheetId: process.env.SHEET_ID_LINER || '',
+    tab: 'B.Liner QC Report',
+    headerRow: 2,
+    dataStartRow: 3,
+  },
+  printing_qc: {
+    spreadsheetId: process.env.SHEET_ID_PRINTING || '',
+    tab: 'B. Printing QC Report',
+    headerRow: 2,
+    dataStartRow: 3,
+  },
+  printing_ink_qc: {
+    spreadsheetId: process.env.SHEET_ID_PRINTING || '',
+    tab: 'B.1 Printing Roll Down QC Report',
+    headerRow: 2,
+    dataStartRow: 3,
+  },
+  bopp_qc: {
+    spreadsheetId: process.env.SHEET_ID_BOPP || '',
+    tab: 'B. BOPP Lamination QC Report',
+    headerRow: 2,
+    dataStartRow: 3,
+  },
+  bcs_qc: {
+    spreadsheetId: process.env.SHEET_ID_BCS || '',
+    tab: 'B. BCS (Bag Conversion Section) QC Report',
+    headerRow: 1,
+    dataStartRow: 2,
+  },
+  manual_stitch_qc: {
+    spreadsheetId: process.env.SHEET_ID_BALING || '',
+    tab: 'C. Manual Stitching QC Report',
+    headerRow: 1,
+    dataStartRow: 2,
   },
 };

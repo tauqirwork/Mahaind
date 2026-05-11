@@ -14,10 +14,10 @@ export function useAppendEntry(tabKey, onSuccess) {
       const { rowNumber } = await appendEntry(tabKey, rowArray);
 
       // Wait for Sheets to compute formulas
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       const { row } = await fetchUpdatedRow(tabKey, rowNumber);
-      
+
       if (onSuccess) onSuccess(row, rowNumber);
     } catch (err) {
       setError(err.message);

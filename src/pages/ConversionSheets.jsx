@@ -2,15 +2,26 @@ import React, { useState } from 'react';
 import { useSheetData } from '../hooks/useSheetData';
 import SheetDataTable from '../components/conversion/SheetDataTable';
 import EntryFormDrawer from '../components/conversion/EntryFormDrawer';
+import SheetTabBar from '../components/conversion/SheetTabBar';
 
-const TABS = [
-  { key: 'tapeline', label: 'Tapeline' },
-  { key: 'rolldown', label: 'Roll Down' },
-  { key: 'liner',    label: 'Liner' },
-  { key: 'printing', label: 'Printing' },
-  { key: 'bopp',     label: 'BOPP / Lam' },
-  { key: 'bcs',      label: 'BCS' },
-  { key: 'baling',   label: 'Baling' },
+export const TABS = [
+  // --- PRODUCTION ---
+  { key: 'tapeline',          label: 'Tapeline',         group: 'Production' },
+  { key: 'rolldown',          label: 'Roll Down',        group: 'Production' },
+  { key: 'liner',             label: 'Liner',            group: 'Production' },
+  { key: 'printing',          label: 'Printing',         group: 'Production' },
+  { key: 'bopp',              label: 'BOPP / Lam',       group: 'Production' },
+  { key: 'bcs',               label: 'BCS',              group: 'Production' },
+  { key: 'baling',            label: 'Baling',           group: 'Production' },
+
+  // --- QC REPORTS ---
+  { key: 'loom_qc',           label: 'Loom QC',          group: 'QC Reports' },
+  { key: 'liner_qc',          label: 'Liner QC',         group: 'QC Reports' },
+  { key: 'printing_qc',       label: 'Printing QC',      group: 'QC Reports' },
+  { key: 'printing_ink_qc',   label: 'Print Ink QC',     group: 'QC Reports' },
+  { key: 'bopp_qc',           label: 'BOPP QC',          group: 'QC Reports' },
+  { key: 'bcs_qc',            label: 'BCS QC',           group: 'QC Reports' },
+  { key: 'manual_stitch_qc',  label: 'Stitching QC',     group: 'QC Reports' },
 ];
 
 export default function ConversionSheets() {
@@ -68,25 +79,7 @@ export default function ConversionSheets() {
       )}
 
       {/* Tabs */}
-      <div className="border-b border-slate-200">
-        <nav className="-mb-px flex space-x-8 overflow-x-auto">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`
-                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
-                ${activeTab === tab.key
-                  ? 'border-sky-500 text-sky-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                }
-              `}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+      <SheetTabBar tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Table */}
       <SheetDataTable headers={data.headers} rows={data.rows} loading={loading} />

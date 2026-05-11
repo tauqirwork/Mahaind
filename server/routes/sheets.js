@@ -11,8 +11,14 @@ const CONFIG_PATH = path.join(__dirname, '../config/sheets.json');
 const getDynamicSheetId = (key) => {
   if (fs.existsSync(CONFIG_PATH)) {
     const data = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-    // Map bopp/lamination key differences if any
-    const searchKey = key === 'bopp' ? 'lamination' : key;
+    let searchKey = key;
+    if (key === 'bopp' || key === 'bopp_qc') searchKey = 'lamination';
+    else if (key === 'loom_qc') searchKey = 'rolldown';
+    else if (key === 'liner_qc') searchKey = 'liner';
+    else if (key === 'printing_qc' || key === 'printing_ink_qc') searchKey = 'printing';
+    else if (key === 'bcs_qc') searchKey = 'bcs';
+    else if (key === 'manual_stitch_qc') searchKey = 'baling';
+    
     return data[searchKey] || '';
   }
   return '';
@@ -52,7 +58,7 @@ router.post('/:key/append', async (req, res) => {
       return res.status(400).json({ error: 'rowArray is required and must be an array' });
     }
 
-    const rowNum = await sheetOps.appendRow(config.spreadsheetId, config.tab, rowArray);
+    const rowNum = await sheetOps.appendRow(config.spreadsheetId, config.tab, rowArray, config.dataStartRow);
     res.json({ success: true, rowNumber: rowNum });
   } catch (err) {
     if (err.code === 403) {

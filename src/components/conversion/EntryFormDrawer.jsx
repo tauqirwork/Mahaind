@@ -6,6 +6,13 @@ import PrintingForm from './forms/PrintingForm';
 import BOPPForm from './forms/BOPPForm';
 import BCSForm from './forms/BCSForm';
 import BalingForm from './forms/BalingForm';
+import LoomQCForm from './forms/LoomQCForm';
+import LinerQCForm from './forms/LinerQCForm';
+import PrintingQCForm from './forms/PrintingQCForm';
+import PrintingInkQCForm from './forms/PrintingInkQCForm';
+import BOPPQCForm from './forms/BOPPQCForm';
+import BCSQCForm from './forms/BCSQCForm';
+import ManualStitchQCForm from './forms/ManualStitchQCForm';
 
 const FORMS = {
   tapeline: TapelineForm,
@@ -15,6 +22,13 @@ const FORMS = {
   bopp: BOPPForm,
   bcs: BCSForm,
   baling: BalingForm,
+  loom_qc: LoomQCForm,
+  liner_qc: LinerQCForm,
+  printing_qc: PrintingQCForm,
+  printing_ink_qc: PrintingInkQCForm,
+  bopp_qc: BOPPQCForm,
+  bcs_qc: BCSQCForm,
+  manual_stitch_qc: ManualStitchQCForm,
 };
 
 export default function EntryFormDrawer({ isOpen, onClose, activeTab, onSubmitSuccess }) {
