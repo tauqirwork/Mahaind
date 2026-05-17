@@ -76,7 +76,11 @@ const Team = () => {
     
     setIsSubmittingTask(true);
     try {
-       const createdById = user?.id?.startsWith('mock-') ? null : (user?.id || null);
+       // If the user is logged in via manual DB bypass, their ID won't exist in Supabase auth.users, 
+       // which violates tasks_created_by_fkey. So we pass null for manual sessions.
+       const isManualSession = !!localStorage.getItem('manual-session');
+       const createdById = (user?.id?.startsWith('mock-') || isManualSession) ? null : (user?.id || null);
+       
        const { error: insertErr } = await supabase.from('tasks').insert([{
           title: newTask.title,
           assigned_to: newTask.assigned_to,
