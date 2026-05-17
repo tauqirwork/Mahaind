@@ -76,11 +76,12 @@ const Team = () => {
     
     setIsSubmittingTask(true);
     try {
+       const createdById = user?.id?.startsWith('mock-') ? null : (user?.id || null);
        const { error: insertErr } = await supabase.from('tasks').insert([{
           title: newTask.title,
           assigned_to: newTask.assigned_to,
           status: 'Pending',
-          created_by: user?.id || null
+          created_by: createdById
        }]);
        if (insertErr) throw insertErr;
        setIsTaskModalOpen(false);
