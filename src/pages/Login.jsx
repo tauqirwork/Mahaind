@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getDefaultRoute } from '../components/ProtectedRoute';
 
 const Login = () => {
-  const { login, user, error: authError } = useAuth();
+  const { login, user, role, error: authError } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true });
+    if (user && role) {
+      navigate(getDefaultRoute(role), { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, role, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

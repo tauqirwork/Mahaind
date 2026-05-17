@@ -2,6 +2,11 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+export const getDefaultRoute = (role) => {
+  if (role === 'qc') return '/conversion';
+  return '/dashboard';
+};
+
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, role, loading } = useAuth();
 
@@ -21,9 +26,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Not authorized role -> Send back to dashboard
+  // Not authorized role -> Send back to default allowed route
   if (allowedRoles && !allowedRoles.includes(role)) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={getDefaultRoute(role)} replace />;
   }
 
   return children;

@@ -34,6 +34,32 @@ const getConfig = (key) => {
   };
 };
 
+router.get('/floor-status', async (req, res) => {
+  try {
+    const rolldownConfig = getConfig('rolldown');
+    const balingConfig = getConfig('baling');
+    
+    if (!rolldownConfig || !balingConfig) {
+      return res.status(500).json({ error: 'Config missing for rolldown or baling' });
+    }
+
+    const rolldownRows = await sheetOps.getRows(rolldownConfig.spreadsheetId, rolldownConfig.tab, rolldownConfig.dataStartRow);
+    const balingRows = await sheetOps.getRows(balingConfig.spreadsheetId, balingConfig.tab, balingConfig.dataStartRow);
+
+    // Roll Down: col Y (index 24) = Issue To, col Z (index 25) = Status
+    const rollsOnFloor = rolldownRows.filter(r => !r[25] || r[25].trim() === '').length;
+    const rollsAtPrinting = rolldownRows.filter(r => r[24] === 'PRINTING' && r[25] === 'ISSUED').length;
+    const rollsAtBOPP = rolldownRows.filter(r => r[24] === 'BOPP/LAM' && r[25] === 'ISSUED').length;
+
+    // Baling: col J (index 9) = No. of Bale
+    const totalBales = balingRows.reduce((sum, r) => sum + (parseInt(r[9]) || 0), 0);
+
+    res.json({ rollsOnFloor, rollsAtPrinting, rollsAtBOPP, totalBales });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/:key/rows', async (req, res) => {
   try {
     const config = getConfig(req.params.key);

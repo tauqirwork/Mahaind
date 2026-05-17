@@ -3,6 +3,7 @@ import { useSheetData } from '../hooks/useSheetData';
 import SheetDataTable from '../components/conversion/SheetDataTable';
 import EntryFormDrawer from '../components/conversion/EntryFormDrawer';
 import SheetTabBar from '../components/conversion/SheetTabBar';
+import FactoryFloorStatus from '../components/conversion/FactoryFloorStatus';
 
 export const TABS = [
   // --- PRODUCTION ---
@@ -77,6 +78,9 @@ export default function ConversionSheets() {
           {error}
         </div>
       )}
+
+      {/* Factory Floor Status Widget */}
+      <FactoryFloorStatus />
 
       {/* Tabs */}
       <SheetTabBar tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />

@@ -69,7 +69,7 @@ const mapRowArray = (rowArr, mapping) => {
       'pending_amount', 'days_overdue', 'total_invoice_amount', 'total_received_amount',
       'total_pending_amount', 'paid_amount'
     ];
-    
+
     if (numericKeys.includes(targetKey)) {
       const cleaned = val.replace(/[^0-9.-]+/g, "");
       parsedVal = cleaned === "" ? 0 : parseFloat(cleaned);
@@ -86,7 +86,7 @@ const fetchSheet = async (sheetName, mapping) => {
       throw new Error(`Failed to fetch ${sheetName}: ${response.statusText}`);
     }
     const csvContent = await response.text();
-    
+
     return new Promise((resolve, reject) => {
       Papa.parse(csvContent, {
         header: false,

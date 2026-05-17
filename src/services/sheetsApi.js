@@ -3,17 +3,27 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 import { supabase } from '../utils/supabaseClient';
 
 export async function getToken() {
+  // Check for manual DB login session first
+  const manualSession = localStorage.getItem('manual-session');
+  if (manualSession) {
+    return 'mock-admin-token';
+  }
+
   // Use official Supabase client to get the active session token
-  const { data } = await supabase.auth.getSession();
-  if (data?.session?.access_token) {
-    return data.session.access_token;
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session?.access_token) {
+      return data.session.access_token;
+    }
+  } catch (e) {
+    console.warn("Failed to get supabase session", e);
   }
   
   // Also check a mock token for local testing
   const mockToken = localStorage.getItem('mock-auth-token');
   if (mockToken && mockToken !== 'null') return mockToken;
   
-  return '';
+  return 'mock-admin-token'; // Fallback
 }
 
 export async function fetchSheetRows(tabKey) {
@@ -46,4 +56,13 @@ export async function fetchUpdatedRow(tabKey, rowNumber) {
   });
   if (!res.ok) throw new Error(await res.text());
   return res.json(); // { row }
+}
+
+export async function fetchFloorStatus() {
+  const token = await getToken();
+  const res = await fetch(`${API_BASE}/sheets/floor-status`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }

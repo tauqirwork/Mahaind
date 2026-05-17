@@ -35,14 +35,14 @@ const ClientSummary = () => {
   const agingData = useMemo(() => {
     const active = data.receivables || [];
     let bucket30 = 0, bucket60 = 0, bucket90 = 0, bucket90Plus = 0;
-    
+
     active.forEach(r => {
-       const days = r.days_overdue || 0;
-       const amt = r.pending_amount || 0;
-       if (days <= 30) bucket30 += amt;
-       else if (days <= 60) bucket60 += amt;
-       else if (days <= 90) bucket90 += amt;
-       else bucket90Plus += amt;
+      const days = r.days_overdue || 0;
+      const amt = r.pending_amount || 0;
+      if (days <= 30) bucket30 += amt;
+      else if (days <= 60) bucket60 += amt;
+      else if (days <= 90) bucket90 += amt;
+      else bucket90Plus += amt;
     });
 
     return [
@@ -55,18 +55,18 @@ const ClientSummary = () => {
 
   // Dispatch Trend (Monthly/Weekly pseudo grouping)
   const dispatchTrend = useMemo(() => {
-     const logs = data.dispatch || [];
-     const trends = logs.reduce((acc, log) => {
-        // use week or date
-        const period = log.week || 'Wk-0';
-        if (!acc[period]) acc[period] = { name: period, volume: 0, amount: 0 };
-        acc[period].volume += (log.quantity || 0);
-        acc[period].amount += (log.total_amount_gst || 0);
-        return acc;
-     }, {});
-     
-     // Get last 8 periods sorted alphabetically/chronologically
-     return Object.values(trends).sort((a, b) => a.name.localeCompare(b.name)).slice(-8);
+    const logs = data.dispatch || [];
+    const trends = logs.reduce((acc, log) => {
+      // use week or date
+      const period = log.week || 'Wk-0';
+      if (!acc[period]) acc[period] = { name: period, volume: 0, amount: 0 };
+      acc[period].volume += (log.quantity || 0);
+      acc[period].amount += (log.total_amount_gst || 0);
+      return acc;
+    }, {});
+
+    // Get last 8 periods sorted alphabetically/chronologically
+    return Object.values(trends).sort((a, b) => a.name.localeCompare(b.name)).slice(-8);
   }, [data.dispatch]);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -93,32 +93,19 @@ const ClientSummary = () => {
       </section>
 
       <section className="mt-8">
-         <GlobalFilters />
+        <GlobalFilters />
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 animate-fade-in">
         <KpiCard title="Total Invoiced" value={formatCurrency(kpis.total_invoice)} icon="receipt_long" theme="sky" />
         <KpiCard title="Total Received" value={formatCurrency(kpis.total_received)} icon="trending_up" theme="green" />
         <KpiCard title="Total Pending" value={formatCurrency(kpis.total_pending)} icon="warning" theme="solidPrimary" isSolid={true} trend={`${kpis.total_invoice ? ((kpis.total_received / kpis.total_invoice) * 100).toFixed(1) : 0}% Collected`} />
-        
-        <div className="bg-slate-900 rounded border border-slate-800 p-6 shadow-xl relative overflow-hidden flex flex-col justify-center">
-            <div className="absolute right-[-10%] bottom-[-10%] text-slate-800 pointer-events-none">
-              <span className="material-symbols-outlined" style={{fontSize: '120px'}}>analytics</span>
-            </div>
-            <div className="relative z-10">
-               <h4 className="text-xs font-bold font-space text-slate-400 uppercase tracking-widest mb-2">Director Overview</h4>
-               <p className="text-sm text-slate-300 leading-relaxed max-w-[90%]">
-                 You have <span className="text-white font-bold">{filteredData.length} active clients</span> generating automated receivables data.
-               </p>
-               <button onClick={() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})} className="mt-4 px-4 py-1.5 border border-sky-500/50 text-sky-400 hover:bg-sky-500/10 rounded font-bold text-[10px] tracking-wider transition-colors inline-block">
-                 VIEW MASTER LEDGER
-               </button>
-            </div>
-        </div>
+
+
       </section>
 
       <section className="grid grid-cols-12 gap-8 mb-8">
-        
+
         {/* Logistics Trend */}
         <div className="col-span-12 lg:col-span-8 bg-white border border-slate-200 rounded p-8 shadow-sm">
           <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
@@ -132,10 +119,10 @@ const ClientSummary = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dispatchTrend} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis dataKey="name" tick={{fill: '#94A3B8', fontSize: 12}} axisLine={false} tickLine={false} />
-                  <YAxis tick={{fill: '#94A3B8', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `${(val/1000).toFixed(0)}k`} />
-                  <RechartsTooltip cursor={{fill: '#F8FAFC', stroke: '#E2E8F0'}} contentStyle={{ borderRadius: '8px', border: '1px solid #E2E8F0', padding: '12px' }} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }}/>
+                  <XAxis dataKey="name" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => `${(val / 1000).toFixed(0)}k`} />
+                  <RechartsTooltip cursor={{ fill: '#F8FAFC', stroke: '#E2E8F0' }} contentStyle={{ borderRadius: '8px', border: '1px solid #E2E8F0', padding: '12px' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
                   <Line type="monotone" name="Dispatched Bags (Qty)" dataKey="volume" stroke="#0ea5e9" strokeWidth={3} activeDot={{ r: 8 }} />
                 </LineChart>
               </ResponsiveContainer>
@@ -146,36 +133,36 @@ const ClientSummary = () => {
         {/* Aging Pie Chart */}
         <div className="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded p-8 shadow-sm">
           <div className="mb-4">
-             <h4 className="text-lg font-bold font-space text-slate-900 uppercase tracking-tight">Receivables Aging</h4>
-             <p className="text-xs text-slate-500">Distribution of outstanding limits</p>
+            <h4 className="text-lg font-bold font-space text-slate-900 uppercase tracking-tight">Receivables Aging</h4>
+            <p className="text-xs text-slate-500">Distribution of outstanding limits</p>
           </div>
           <div className="h-[300px] w-full relative flex items-center justify-center">
             {isLoading ? <div className="animate-pulse bg-slate-100 w-full h-full rounded-full max-w-[200px]"></div> : (
               <>
-                 <ResponsiveContainer width="100%" height="100%">
-                   <PieChart>
-                     <Pie data={agingData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value">
-                       {agingData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                     </Pie>
-                     <RechartsTooltip formatter={(value) => formatCurrency(value)} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                   </PieChart>
-                 </ResponsiveContainer>
-                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none flex-col">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">At Risk</span>
-                    <span className="text-xl font-bold font-space text-slate-800">
-                      {agingData.length > 2 ? '⚠️' : '✅'}
-                    </span>
-                 </div>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={agingData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value">
+                      {agingData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                    </Pie>
+                    <RechartsTooltip formatter={(value) => formatCurrency(value)} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none flex-col">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">At Risk</span>
+                  <span className="text-xl font-bold font-space text-slate-800">
+                    {agingData.length > 2 ? '⚠️' : '✅'}
+                  </span>
+                </div>
               </>
             )}
           </div>
           <div className="flex flex-wrap gap-3 mt-4 justify-center">
-             {agingData.map((entry, i) => (
-                <div key={i} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600">
-                   <div className="w-2.5 h-2.5 rounded-full" style={{backgroundColor: entry.color}}></div>
-                   {entry.name}
-                </div>
-             ))}
+            {agingData.map((entry, i) => (
+              <div key={i} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }}></div>
+                {entry.name}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -192,9 +179,9 @@ const ClientSummary = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topClients} layout="vertical" margin={{ top: 5, right: 30, left: 150, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                  <XAxis type="number" tick={{fill: '#94A3B8', fontSize: 12}} tickFormatter={(val) => `₹${(val/100000).toFixed(1)}L`} />
-                  <YAxis type="category" dataKey="client_name" tick={{fill: '#475569', fontSize: 11, fontWeight: 'bold'}} width={140} axisLine={false} tickLine={false} />
-                  <RechartsTooltip cursor={{fill: '#F1F5F9'}} formatter={(value) => formatCurrency(value)} contentStyle={{ borderRadius: '8px', border: '1px solid #E2E8F0' }} />
+                  <XAxis type="number" tick={{ fill: '#94A3B8', fontSize: 12 }} tickFormatter={(val) => `₹${(val / 100000).toFixed(1)}L`} />
+                  <YAxis type="category" dataKey="client_name" tick={{ fill: '#475569', fontSize: 11, fontWeight: 'bold' }} width={140} axisLine={false} tickLine={false} />
+                  <RechartsTooltip cursor={{ fill: '#F1F5F9' }} formatter={(value) => formatCurrency(value)} contentStyle={{ borderRadius: '8px', border: '1px solid #E2E8F0' }} />
                   <Bar dataKey="total_pending_amount" name="Pending Balance" fill="#ff7e27" radius={[0, 4, 4, 0]} barSize={24} />
                 </BarChart>
               </ResponsiveContainer>

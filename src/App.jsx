@@ -11,18 +11,22 @@ import Inventory from './pages/Inventory';
 import Products from './pages/Products';
 import Production from './pages/Production';
 import Calculator from './pages/Calculator';
+import DocumentPreviewer from './pages/DocumentPreviewer';
 import ConversionSheets from './pages/ConversionSheets';
 import Settings from './pages/Settings';
-import Reports from './pages/Reports';
 import Quotations from './pages/Quotations';
 import InvoiceGenerator from './pages/InvoiceGenerator';
 import Team from './pages/Team';
 import Login from './pages/Login';
+import PayrollModule from './modules/payroll';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
+  const finRoles = ['super_admin', 'manager', 'director', 'accountant'];
+  const opRoles = ['super_admin', 'manager', 'director'];
+  
   return (
     <AuthProvider>
       <DashboardDataProvider>
@@ -42,40 +46,42 @@ function App() {
                       <div className="max-w-[1600px] mx-auto space-y-8 animate-fade-in fade-in-up">
                           <Routes>
                             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                            <Route path="/dashboard" element={<ClientSummary />} />
-                            <Route path="/dispatch" element={<Dispatch />} />
-                            <Route path="/receivables" element={<Receivables />} />
-                            <Route path="/payables" element={<Payables />} />
-                            <Route path="/cashflow" element={<CashFlow />} />
-                            <Route path="/inventory" element={<Inventory />} />
-                            <Route path="/products" element={<Products />} />
-                            <Route path="/production" element={<Production />} />
-                            <Route path="/conversion" element={<ConversionSheets />} />
-                            <Route path="/calculator" element={<Calculator />} />
-                            <Route path="/quotations" element={<Quotations />} />
-                            <Route path="/invoice-gen" element={<InvoiceGenerator />} />
                             
-                            {/* Super Admin Protected Routes */}
-                            <Route path="/team" element={
-                               <ProtectedRoute allowedRoles={['super_admin']}>
-                                  <Team />
-                               </ProtectedRoute>
-                            } />
+                            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={finRoles}><ClientSummary /></ProtectedRoute>} />
+                            <Route path="/dispatch" element={<ProtectedRoute allowedRoles={finRoles}><Dispatch /></ProtectedRoute>} />
+                            <Route path="/receivables" element={<ProtectedRoute allowedRoles={finRoles}><Receivables /></ProtectedRoute>} />
+                            <Route path="/payables" element={<ProtectedRoute allowedRoles={finRoles}><Payables /></ProtectedRoute>} />
+                            <Route path="/cashflow" element={<ProtectedRoute allowedRoles={finRoles}><CashFlow /></ProtectedRoute>} />
+                            <Route path="/invoices" element={<ProtectedRoute allowedRoles={finRoles}><DocumentPreviewer /></ProtectedRoute>} />
+                            <Route path="/invoice-gen" element={<ProtectedRoute allowedRoles={finRoles}><InvoiceGenerator /></ProtectedRoute>} />
+                            
+                            <Route path="/inventory" element={<ProtectedRoute allowedRoles={opRoles}><Inventory /></ProtectedRoute>} />
+                            <Route path="/products" element={<ProtectedRoute allowedRoles={opRoles}><Products /></ProtectedRoute>} />
+                            <Route path="/production" element={<ProtectedRoute allowedRoles={opRoles}><Production /></ProtectedRoute>} />
+                            <Route path="/calculator" element={<ProtectedRoute allowedRoles={opRoles}><Calculator /></ProtectedRoute>} />
+                            <Route path="/quotations" element={<ProtectedRoute allowedRoles={opRoles}><Quotations /></ProtectedRoute>} />
+                            <Route path="/team" element={<ProtectedRoute allowedRoles={opRoles}><Team /></ProtectedRoute>} />
+                            
+                            <Route path="/conversion" element={<ProtectedRoute allowedRoles={[...opRoles, 'qc']}><ConversionSheets /></ProtectedRoute>} />
+                            
+                            <Route path="/payroll" element={<ProtectedRoute allowedRoles={['super_admin', 'manager']}><PayrollModule /></ProtectedRoute>} />
+                            
                             <Route path="/settings" element={
                                <ProtectedRoute allowedRoles={['super_admin']}>
                                   <Settings />
                                </ProtectedRoute>
                             } />
                             
-                            <Route path="/reports" element={<Reports />} />
+                            {/* Fallback for unauthorized/not found */}
+                            <Route path="*" element={
+                               <div className="p-8 text-center text-slate-500">
+                                  <h2 className="text-2xl font-bold mb-2">Access Denied or Not Found</h2>
+                                  <p>You do not have permission to view this page or it does not exist.</p>
+                               </div>
+                            } />
                           </Routes>
                       </div>
                     </div>
-
-                    {/* Contextual FAB from design */}
-                    <button className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 border-b-4 border-orange-600">
-                        <span className="material-symbols-outlined text-2xl">add_chart</span>
-                    </button>
                   </main>
                 </div>
               </ProtectedRoute>

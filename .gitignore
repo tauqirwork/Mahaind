@@ -24,3 +24,23 @@ dist-ssr
 *.sw?
 .env
 server/.env
+# Environment variables (Catch-all for local envs)
+.env.*
+!.env.example
+
+# Temporary and Cache folders
+tmp/
+.eslintcache
+.vite/
+
+# Data Dumps and Logs
+build_output.log
+dump.json
+
+# Local Data files (To prevent accidentally committing sensitive company records)
+*.csv
+*.xlsx
+*.xlsm
+
+# Temporary/Utility Scripts (Optional, if you don't want to track these)
+# *.cjs

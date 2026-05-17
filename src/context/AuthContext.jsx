@@ -20,6 +20,23 @@ export const AuthProvider = ({ children }) => {
       if (session?.user) {
         fetchUserRole(session.user.id);
       } else {
+        // Check for manual DB login
+        const manualSessionStr = localStorage.getItem('manual-session');
+        if (manualSessionStr) {
+           const manualSession = JSON.parse(manualSessionStr);
+           setUser(manualSession.user);
+           setRole(manualSession.role); // Set optimistic role
+           
+           // Re-fetch latest role from DB to ensure they weren't demoted
+           if (manualSession.user?.id && !manualSession.user.id.startsWith('mock-')) {
+               fetchUserRole(manualSession.user.id).then(latestRole => {
+                   if (latestRole && latestRole !== manualSession.role) {
+                       // Update localStorage if changed
+                       localStorage.setItem('manual-session', JSON.stringify({ ...manualSession, role: latestRole }));
+                   }
+               });
+           }
+        }
         setLoading(false);
       }
     });
@@ -27,11 +44,15 @@ export const AuthProvider = ({ children }) => {
     // 2. Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
       if (session?.user) {
+        setUser(session.user);
         fetchUserRole(session.user.id);
       } else {
-        setRole(null);
+        const manualSessionStr = localStorage.getItem('manual-session');
+        if (!manualSessionStr) {
+           setUser(null);
+           setRole(null);
+        }
         setLoading(false);
       }
     });
@@ -41,9 +62,6 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserRole = async (userId) => {
     try {
-      // In a real system, you'd fetch this from a 'profiles' or 'roles' table linked to auth.users
-      // Mocking role assignment for demonstration if DB isn't strictly configured yet.
-      // E.g. we can hardcode email logic for now or fetch from table.
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
@@ -51,62 +69,101 @@ export const AuthProvider = ({ children }) => {
         .single();
       
       if (error) {
-         // Fallback logic for mock environment when DB tables don't exist yet
-         if (user?.email?.includes('admin')) setRole('super_admin');
-         else setRole('viewer');
+         assignRoleFallback();
+         return null;
       } else {
          setRole(data.role);
+         return data.role;
       }
     } catch (err) {
-      console.warn("Could not fetch user role. Defaulting to viewer.", err);
-      // Fallback
-      if (user?.email?.includes('admin')) setRole('super_admin');
-      else setRole('viewer');
+      console.warn("Could not fetch user role.", err);
+      assignRoleFallback();
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
+  const assignRoleFallback = () => {
+      const e = user?.email?.toLowerCase() || '';
+      if (e.includes('admin')) setRole('super_admin');
+      else if (e.includes('manager')) setRole('manager');
+      else if (e.includes('director')) setRole('director');
+      else if (e.includes('qc')) setRole('qc');
+      else if (e.includes('accountant')) setRole('accountant');
+      else setRole('director'); // default read-only
+  };
+
+  const handleManualDBLogin = async (email, password) => {
+      try {
+         const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('email', email)
+            .eq('password', password)
+            .single();
+
+         if (!error && data) {
+            const mockUser = { id: data.id, email: data.email, user_metadata: { full_name: data.full_name } };
+            setUser(mockUser);
+            setRole(data.role);
+            setError(null);
+            localStorage.setItem('manual-session', JSON.stringify({ user: mockUser, role: data.role }));
+            return { data: mockUser, error: null };
+         }
+      } catch (e) {
+         console.warn("Manual DB login error:", e);
+      }
+      return null;
+  };
+
+  const handleMockLogin = (email, password) => {
+      const mockLogins = {
+         'admin@mahaind.com': { id: 'mock-1', email: 'admin@mahaind.com', role: 'super_admin' },
+         'manager@mahaind.com': { id: 'mock-2', email: 'manager@mahaind.com', role: 'manager' },
+         'director@mahaind.com': { id: 'mock-3', email: 'director@mahaind.com', role: 'director' },
+         'qc@mahaind.com': { id: 'mock-4', email: 'qc@mahaind.com', role: 'qc' },
+         'accountant@mahaind.com': { id: 'mock-5', email: 'accountant@mahaind.com', role: 'accountant' },
+      };
+      
+      const acc = mockLogins[email];
+      if (acc && password === 'admin123') {
+         const mockUser = { id: acc.id, email: acc.email, user_metadata: { full_name: acc.role.toUpperCase() } };
+         setUser(mockUser);
+         setRole(acc.role);
+         setError(null);
+         localStorage.setItem('manual-session', JSON.stringify({ user: mockUser, role: acc.role }));
+         return { data: mockUser, error: null };
+      }
+      return null;
+  };
+
   const login = async ({ email, password }) => {
     setError(null);
     try {
+      // 1. Try Supabase Native Auth
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
-        // Mock login override for demonstration if Supabase env vars are missing
-        if (email === 'admin@mahaind.com' && password === 'admin123') {
-           const mockUser = { id: 'mock-1', email: 'admin@mahaind.com' };
-           setUser(mockUser);
-           setRole('super_admin');
-           setError(null); // Clear any supbase config errors
-           localStorage.setItem('mock-auth-token', 'mock-admin-token');
-           return { data: mockUser, error: null };
-        } else if (email === 'staff@mahaind.com' && password === 'staff123') {
-           const mockUser = { id: 'mock-2', email: 'staff@mahaind.com' };
-           setUser(mockUser);
-           setRole('viewer');
-           setError(null); // Clear any supbase config errors
-           localStorage.setItem('mock-auth-token', 'mock-staff-token');
-           return { data: mockUser, error: null };
-        }
+        // 2. Try Manual Profiles DB check
+        const manualResult = await handleManualDBLogin(email, password);
+        if (manualResult) return manualResult;
+
+        // 3. Try Hardcoded Mock Fallbacks
+        const mockResult = handleMockLogin(email, password);
+        if (mockResult) return mockResult;
+        
         setError(error.message);
       }
     } catch (err) {
-      // Handle network errors (like invalid Supabase URL) by falling back to mock login
-      if (email === 'admin@mahaind.com' && password === 'admin123') {
-         const mockUser = { id: 'mock-1', email: 'admin@mahaind.com' };
-         setUser(mockUser);
-         setRole('super_admin');
-         localStorage.setItem('mock-auth-token', 'mock-admin-token');
-         return { data: mockUser, error: null };
-      } else if (email === 'staff@mahaind.com' && password === 'staff123') {
-         const mockUser = { id: 'mock-2', email: 'staff@mahaind.com' };
-         setUser(mockUser);
-         setRole('viewer');
-         localStorage.setItem('mock-auth-token', 'mock-staff-token');
-         return { data: mockUser, error: null };
-      }
-      setError("Connection failed. Please check your Supabase credentials.");
+      // If network fails or everything fails
+      const manualResult = await handleManualDBLogin(email, password);
+      if (manualResult) return manualResult;
+
+      const mockResult = handleMockLogin(email, password);
+      if (mockResult) return mockResult;
+
+      setError("Connection failed. Please check your credentials.");
     }
   };
 
@@ -114,7 +171,7 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signOut();
     setUser(null);
     setRole(null);
-    localStorage.removeItem('mock-auth-token');
+    localStorage.removeItem('manual-session');
   };
 
   return (
