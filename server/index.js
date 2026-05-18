@@ -17,10 +17,12 @@ const pdfRoutes = require('./routes/pdf');
 const attendanceRoutes = require('./routes/attendance');
 const payrollRoutes = require('./routes/payroll');
 const employeesPayrollRoutes = require('./routes/employees-payroll');
+const usersRoutes = require('./routes/users');
 
 app.use('/api/attendance', verifyAuth, attendanceRoutes);
 app.use('/api/payroll', verifyAuth, payrollRoutes);
 app.use('/api/employees', verifyAuth, employeesPayrollRoutes);
+app.use('/api/users', verifyAuth, usersRoutes);
 
 app.use('/api/sheets', verifyAuth, sheetRoutes);
 app.use('/api/config', verifyAuth, settingsRoutes);

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import DataTable from '../components/DataTable';
 
 const Team = () => {
-  const { user, role } = useAuth();
+  const { user, role, session } = useAuth();
   const [activeTab, setActiveTab] = useState('kpis'); // kpis, employees
   
   // KPI State
@@ -103,33 +103,28 @@ const Team = () => {
     e.preventDefault();
     setIsSubmittingEmp(true);
     try {
+       const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+       const token = session?.access_token || 'mock-token';
+
        if (newEmp.id) {
-          // Update existing
-          const { error: updateErr } = await supabase.from('profiles').update({
-             full_name: newEmp.full_name,
-             role: role === 'super_admin' ? newEmp.role : undefined, // only super_admin can change roles
-             department: newEmp.department,
-             salary: parseFloat(newEmp.salary) || 0,
-             password: newEmp.password // Update password manually
-          }).eq('id', newEmp.id);
-          
-          if (updateErr) throw updateErr;
+          // Update existing via backend API
+          const res = await fetch(`${API_BASE}/users/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(newEmp)
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Update failed');
        } else {
-          // Add new
-          const mockId = crypto.randomUUID();
-          const { error: insertErr } = await supabase.from('profiles').insert([{
-             id: mockId,
-             email: newEmp.email,
-             full_name: newEmp.full_name,
-             role: newEmp.role,
-             department: newEmp.department,
-             salary: parseFloat(newEmp.salary) || 0,
-             password: newEmp.password // Save password manually
-          }]);
-          
-          if (insertErr) {
-             alert("Note: Due to Supabase Auth constraints, true user creation requires Admin API. Showing in UI only.");
-          }
+          // Add new via backend API (creates Auth User + Profile)
+          const payload = { ...newEmp, role: role === 'super_admin' ? newEmp.role : 'viewer' };
+          const res = await fetch(`${API_BASE}/users/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Creation failed');
        }
        setIsEmpModalOpen(false);
        setNewEmp({ id: null, full_name: '', email: '', role: 'viewer', department: '', salary: '', password: '' });
@@ -157,8 +152,16 @@ const Team = () => {
   const handleDeleteEmployee = async (id) => {
      if (!window.confirm("Are you sure you want to delete this employee? This action cannot be undone.")) return;
      try {
-        const { error: deleteErr } = await supabase.from('profiles').delete().eq('id', id);
-        if (deleteErr) throw deleteErr;
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        const token = session?.access_token || 'mock-token';
+
+        const res = await fetch(`${API_BASE}/users/delete/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Delete failed');
+
         fetchData();
      } catch (err) {
         alert("Failed to delete employee: " + err.message);

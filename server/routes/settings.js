@@ -1,19 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { createClient } = require('@supabase/supabase-js');
-
-const fs = require('fs');
-const path = require('path');
-
-const CONFIG_PATH = path.join(__dirname, '../config/sheets.json');
+const supabase = require('../services/supabaseClient');
 
 router.get('/', async (req, res) => {
   try {
-    if (!fs.existsSync(CONFIG_PATH)) {
-      return res.json({});
+    const { data, error } = await supabase.from('app_settings').select('*');
+    if (error) throw error;
+    
+    const config = {};
+    if (data) {
+      data.forEach(item => {
+        config[item.key] = item.value;
+      });
     }
-    const data = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-    res.json(data);
+    res.json(config);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -21,10 +21,18 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const dir = path.dirname(CONFIG_PATH);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const config = req.body;
     
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(req.body, null, 2));
+    const upserts = Object.keys(config).map(key => ({
+      key: key,
+      value: config[key]
+    }));
+    
+    if (upserts.length > 0) {
+      const { error } = await supabase.from('app_settings').upsert(upserts, { onConflict: 'key' });
+      if (error) throw error;
+    }
+    
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });

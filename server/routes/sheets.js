@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 const sheetOps = require('../services/sheetOperations');
 const sheetConfig = require('../config/sheetConfig');
+const supabase = require('../services/supabaseClient');
 
-const fs = require('fs');
-const path = require('path');
+const getDynamicSheetId = async (key) => {
+  try {
+    const { data, error } = await supabase.from('app_settings').select('*');
+    if (error || !data) return '';
+    
+    const configData = {};
+    data.forEach(item => configData[item.key] = item.value);
 
-const CONFIG_PATH = path.join(__dirname, '../config/sheets.json');
-
-const getDynamicSheetId = (key) => {
-  if (fs.existsSync(CONFIG_PATH)) {
-    const data = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
     let searchKey = key;
     if (key === 'bopp' || key === 'bopp_qc') searchKey = 'lamination';
     else if (key === 'loom_qc') searchKey = 'rolldown';
@@ -19,25 +20,27 @@ const getDynamicSheetId = (key) => {
     else if (key === 'bcs_qc') searchKey = 'bcs';
     else if (key === 'manual_stitch_qc') searchKey = 'baling';
     
-    return data[searchKey] || '';
+    return configData[searchKey] || '';
+  } catch (err) {
+    return '';
   }
-  return '';
 };
 
 // Dynamic config resolution
-const getConfig = (key) => {
+const getConfig = async (key) => {
   const baseConfig = sheetConfig[key];
   if (!baseConfig) return null;
+  const dynamicId = await getDynamicSheetId(key);
   return {
     ...baseConfig,
-    spreadsheetId: getDynamicSheetId(key) || baseConfig.spreadsheetId
+    spreadsheetId: dynamicId || baseConfig.spreadsheetId
   };
 };
 
 router.get('/floor-status', async (req, res) => {
   try {
-    const rolldownConfig = getConfig('rolldown');
-    const balingConfig = getConfig('baling');
+    const rolldownConfig = await getConfig('rolldown');
+    const balingConfig = await getConfig('baling');
     
     if (!rolldownConfig || !balingConfig) {
       return res.status(500).json({ error: 'Config missing for rolldown or baling' });
@@ -62,7 +65,7 @@ router.get('/floor-status', async (req, res) => {
 
 router.get('/:key/rows', async (req, res) => {
   try {
-    const config = getConfig(req.params.key);
+    const config = await getConfig(req.params.key);
     if (!config) return res.status(404).json({ error: 'Config not found for key' });
 
     const headers = await sheetOps.getHeaders(config.spreadsheetId, config.tab, config.headerRow);
@@ -76,7 +79,7 @@ router.get('/:key/rows', async (req, res) => {
 
 router.post('/:key/append', async (req, res) => {
   try {
-    const config = getConfig(req.params.key);
+    const config = await getConfig(req.params.key);
     if (!config) return res.status(404).json({ error: 'Config not found for key' });
 
     const { rowArray } = req.body;
@@ -99,7 +102,7 @@ router.post('/:key/append', async (req, res) => {
 
 router.get('/:key/row/:n', async (req, res) => {
   try {
-    const config = getConfig(req.params.key);
+    const config = await getConfig(req.params.key);
     if (!config) return res.status(404).json({ error: 'Config not found for key' });
 
     const rowNum = parseInt(req.params.n, 10);
