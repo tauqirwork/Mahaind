@@ -36,11 +36,9 @@ const Login = () => {
       
       <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-xl shadow-slate-200/50 relative z-10 border border-slate-100">
         <div className="flex flex-col items-center mb-10">
-           <div className="w-16 h-16 bg-gradient-to-br from-sky-400 to-sky-600 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-sky-500/30">
-               <span className="material-symbols-outlined text-3xl">precision_manufacturing</span>
-           </div>
-           <h1 className="text-3xl font-bold font-space text-slate-800 tracking-tight">MahaIND</h1>
-           <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Enterprise Core</p>
+           <img src="/maha-logo.png" alt="MahaIND Logo" className="h-24 w-auto object-contain mb-2 drop-shadow-md" />
+           <h1 className="text-3xl font-bold font-space text-slate-800 tracking-tight mt-2">MahaIND</h1>
+           <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Perfection Redefined</p>
         </div>
 
         {authError && (
