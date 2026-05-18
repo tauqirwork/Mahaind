@@ -51,7 +51,8 @@ const Team = () => {
             role: profile.role,
             department: profile.department || 'N/A',
             salary: profile.salary || 0,
-            password: profile.password || '', // fetch password for display/editing
+            password: profile.password || '',
+            tasks: userTasks, // full list of tasks for this person
             primary_task: userTasks.length > 0 ? userTasks[0].title : 'Awaiting Assignment',
             kpiTarget: Math.max(totalTasks, 5),
             completed: completedTasks,
@@ -164,6 +165,17 @@ const Team = () => {
      }
   };
 
+  const handleDeleteTask = async (taskId) => {
+     if (!window.confirm('Remove this task assignment?')) return;
+     try {
+        const { error: delErr } = await supabase.from('tasks').delete().eq('id', taskId);
+        if (delErr) throw delErr;
+        fetchData();
+     } catch (err) {
+        alert('Failed to delete task: ' + err.message);
+     }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -185,9 +197,29 @@ const Team = () => {
       )
     },
     { 
-      header: 'Primary Active Task', 
-      accessor: 'primary_task',
-      render: (row) => <span className="text-sm font-medium text-slate-700 max-w-[200px] truncate block">{row.primary_task}</span>
+      header: 'Assigned Tasks', 
+      accessor: 'tasks',
+      render: (row) => (
+        <div className="flex flex-col gap-1">
+          {row.tasks && row.tasks.length > 0 ? row.tasks.map(task => (
+            <div key={task.id} className="flex items-center gap-2 group">
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${task.status === 'Completed' ? 'bg-green-500' : 'bg-orange-400'}`}></span>
+              <span className="text-xs text-slate-700 truncate max-w-[180px]" title={task.title}>{task.title}</span>
+              {(role === 'super_admin' || role === 'manager') && (
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="opacity-0 group-hover:opacity-100 ml-1 text-red-400 hover:text-red-600 transition-all"
+                  title="Remove task"
+                >
+                  <span className="material-symbols-outlined text-[14px]">close</span>
+                </button>
+              )}
+            </div>
+          )) : (
+            <span className="text-xs text-slate-400 italic">Awaiting Assignment</span>
+          )}
+        </div>
+      )
     },
     { 
       header: 'Performance KPI', 

@@ -118,23 +118,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleMockLogin = (email, password) => {
-      const mockLogins = {
-         'admin@mahaind.com': { id: 'mock-1', email: 'admin@mahaind.com', role: 'super_admin' },
-         'manager@mahaind.com': { id: 'mock-2', email: 'manager@mahaind.com', role: 'manager' },
-         'director@mahaind.com': { id: 'mock-3', email: 'director@mahaind.com', role: 'director' },
-         'qc@mahaind.com': { id: 'mock-4', email: 'qc@mahaind.com', role: 'qc' },
-         'accountant@mahaind.com': { id: 'mock-5', email: 'accountant@mahaind.com', role: 'accountant' },
-      };
-      
-      const acc = mockLogins[email];
-      if (acc && password === 'admin123') {
-         const mockUser = { id: acc.id, email: acc.email, user_metadata: { full_name: acc.role.toUpperCase() } };
-         setUser(mockUser);
-         setRole(acc.role);
-         setError(null);
-         localStorage.setItem('manual-session', JSON.stringify({ user: mockUser, role: acc.role }));
-         return { data: mockUser, error: null };
-      }
+      // Mock logins removed for production
       return null;
   };
 
