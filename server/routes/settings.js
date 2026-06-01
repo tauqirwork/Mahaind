@@ -5,7 +5,11 @@ const supabase = require('../services/supabaseClient');
 router.get('/', async (req, res) => {
   try {
     const { data, error } = await supabase.from('app_settings').select('*');
-    if (error) throw error;
+    if (error) {
+      // Table might not exist — return empty config instead of crashing
+      console.warn('app_settings fetch error (table may not exist):', error.message);
+      return res.json({});
+    }
     
     const config = {};
     if (data) {

@@ -7,7 +7,10 @@ const supabase = require('../services/supabaseClient');
 const getDynamicSheetId = async (key) => {
   try {
     const { data, error } = await supabase.from('app_settings').select('*');
-    if (error || !data) return '';
+    if (error || !data || data.length === 0) {
+      // Table might not exist or is empty — fall back to static config
+      return null;
+    }
     
     const configData = {};
     data.forEach(item => configData[item.key] = item.value);
@@ -20,9 +23,10 @@ const getDynamicSheetId = async (key) => {
     else if (key === 'bcs_qc') searchKey = 'bcs';
     else if (key === 'manual_stitch_qc') searchKey = 'baling';
     
-    return configData[searchKey] || '';
+    return configData[searchKey] || null;
   } catch (err) {
-    return '';
+    console.warn('getDynamicSheetId error (falling back to static config):', err.message);
+    return null;
   }
 };
 
